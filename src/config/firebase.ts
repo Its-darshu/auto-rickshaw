@@ -5,12 +5,12 @@ import { getFirestore } from 'firebase/firestore';
 
 // Firebase config - Sullia Auto Connect Project
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC_CsK5PAJcP9VclF7u42IQc0ClI6fOZdw",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "sullia-auto-connect.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "sullia-auto-connect",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "sullia-auto-connect.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "648404312897",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:648404312897:web:22218d3a3a4109b587f7c0"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "AIzaSyC_CsK5PAJcP9VclF7u42IQc0ClI6fOZdw",
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "sullia-auto-connect.firebaseapp.com",
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "sullia-auto-connect",
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "sullia-auto-connect.firebasestorage.app",
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "648404312897",
+  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:648404312897:web:22218d3a3a4109b587f7c0"
 };
 
 // Initialize Firebase
