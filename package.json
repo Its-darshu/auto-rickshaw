@@ -8,6 +8,8 @@
     "build": "react-scripts build",
     "build:user": "REACT_APP_BUILD_TYPE=user react-scripts build",
     "build:admin": "REACT_APP_BUILD_TYPE=admin react-scripts build",
+    "deploy:user": "vercel --prod",
+    "deploy:admin": "vercel --prod --local-config vercel-admin.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
