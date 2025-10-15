@@ -1,0 +1,40 @@
+{
+  "name": "village-auto-connect",
+  "version": "1.0.0",
+  "description": "A fast, simple, mobile-friendly website for finding auto drivers by stage/area",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:user": "REACT_APP_BUILD_TYPE=user react-scripts build",
+    "build:admin": "REACT_APP_BUILD_TYPE=admin react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "firebase": "^12.4.0",
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.1",
+    "react-scripts": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.21",
+    "typescript": "^4.9.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
