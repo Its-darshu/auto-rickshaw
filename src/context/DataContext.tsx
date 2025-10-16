@@ -67,6 +67,30 @@ interface DataProviderProps {
 const DRIVERS_COLLECTION = 'drivers';
 const STAGES_COLLECTION = 'stages';
 
+// Input validation and sanitization functions
+const sanitizeString = (input: string): string => {
+  return input.trim().replace(/[<>]/g, ''); // Remove potential XSS characters
+};
+
+const validatePhoneNumber = (phone: string): boolean => {
+  const phoneRegex = /^[+]?[\d\s\-\(\)]{10,15}$/;
+  return phoneRegex.test(phone);
+};
+
+const validateVehicleNumber = (vehicle: string): boolean => {
+  const vehicleRegex = /^[A-Z]{2}[\-\s]?\d{2}[\-\s]?[A-Z]{1,2}[\-\s]?\d{1,4}$/i;
+  return vehicleRegex.test(vehicle) || vehicle.length >= 4; // Allow flexible formats
+};
+
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validateLatLng = (value: number): boolean => {
+  return !isNaN(value) && isFinite(value) && value >= -180 && value <= 180;
+};
+
 export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [stages, setStages] = useState<Stage[]>([]);
@@ -146,24 +170,53 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     try {
       console.log('DataContext: Adding driver to Firestore:', newDriver);
       
-      // Validate required fields
-      if (!newDriver.name || !newDriver.phoneNumber || !newDriver.vehicleNumber || !newDriver.stageId) {
-        throw new Error('Name, phone number, vehicle number, and stage are required');
+      // Validate and sanitize required fields
+      if (!newDriver.name?.trim()) {
+        throw new Error('Driver name is required');
+      }
+      if (!newDriver.phoneNumber?.trim()) {
+        throw new Error('Phone number is required');
+      }
+      if (!newDriver.vehicleNumber?.trim()) {
+        throw new Error('Vehicle number is required');
+      }
+      if (!newDriver.stageId?.trim()) {
+        throw new Error('Stage selection is required');
+      }
+      
+      // Sanitize inputs
+      const sanitizedName = sanitizeString(newDriver.name);
+      const sanitizedPhone = sanitizeString(newDriver.phoneNumber);
+      const sanitizedVehicle = sanitizeString(newDriver.vehicleNumber).toUpperCase();
+      
+      // Validate formats
+      if (sanitizedName.length < 2 || sanitizedName.length > 50) {
+        throw new Error('Driver name must be between 2 and 50 characters');
+      }
+      if (!validatePhoneNumber(sanitizedPhone)) {
+        throw new Error('Invalid phone number format');
+      }
+      if (!validateVehicleNumber(sanitizedVehicle)) {
+        throw new Error('Invalid vehicle number format');
       }
       
       // Create the document data, excluding undefined fields
       const driverData: any = {
-        name: newDriver.name,
-        phoneNumber: newDriver.phoneNumber,
-        vehicleNumber: newDriver.vehicleNumber,
+        name: sanitizedName,
+        phoneNumber: sanitizedPhone,
+        vehicleNumber: sanitizedVehicle,
         stageId: newDriver.stageId,
-        isEmergency: newDriver.isEmergency || false,
+        isEmergency: Boolean(newDriver.isEmergency),
         createdAt: new Date(),
       };
       
-      // Only include whatsappNumber if it has a value
-      if (newDriver.whatsappNumber && newDriver.whatsappNumber.trim() !== '') {
-        driverData.whatsappNumber = newDriver.whatsappNumber.trim();
+      // Validate and include WhatsApp number if provided
+      if (newDriver.whatsappNumber?.trim()) {
+        const sanitizedWhatsApp = sanitizeString(newDriver.whatsappNumber);
+        if (!validatePhoneNumber(sanitizedWhatsApp)) {
+          throw new Error('Invalid WhatsApp number format');
+        }
+        driverData.whatsappNumber = sanitizedWhatsApp;
       }
       
       const docRef = await addDoc(collection(db, DRIVERS_COLLECTION), driverData);
@@ -179,31 +232,58 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const updateDriver = async (id: string, updatedDriver: Partial<Driver>) => {
     try {
+      if (!id?.trim()) {
+        throw new Error('Driver ID is required for update');
+      }
+      
       const driverRef = doc(db, DRIVERS_COLLECTION, id);
       
-      // Create update data, excluding undefined fields
+      // Create update data, excluding undefined fields  
       const updateData: any = {
         updatedAt: new Date(),
       };
       
-      // Only include fields that are not undefined
+      // Validate and sanitize fields being updated
       if (updatedDriver.name !== undefined) {
-        updateData.name = updatedDriver.name;
+        const sanitizedName = sanitizeString(updatedDriver.name);
+        if (sanitizedName.length < 2 || sanitizedName.length > 50) {
+          throw new Error('Driver name must be between 2 and 50 characters');
+        }
+        updateData.name = sanitizedName;
       }
+      
       if (updatedDriver.phoneNumber !== undefined) {
-        updateData.phoneNumber = updatedDriver.phoneNumber;
+        const sanitizedPhone = sanitizeString(updatedDriver.phoneNumber);
+        if (!validatePhoneNumber(sanitizedPhone)) {
+          throw new Error('Invalid phone number format');
+        }
+        updateData.phoneNumber = sanitizedPhone;
       }
+      
       if (updatedDriver.vehicleNumber !== undefined) {
-        updateData.vehicleNumber = updatedDriver.vehicleNumber;
+        const sanitizedVehicle = sanitizeString(updatedDriver.vehicleNumber).toUpperCase();
+        if (!validateVehicleNumber(sanitizedVehicle)) {
+          throw new Error('Invalid vehicle number format');
+        }
+        updateData.vehicleNumber = sanitizedVehicle;
       }
+      
       if (updatedDriver.stageId !== undefined) {
         updateData.stageId = updatedDriver.stageId;
       }
+      
       if (updatedDriver.isEmergency !== undefined) {
-        updateData.isEmergency = updatedDriver.isEmergency;
+        updateData.isEmergency = Boolean(updatedDriver.isEmergency);
       }
-      if (updatedDriver.whatsappNumber !== undefined && updatedDriver.whatsappNumber.trim() !== '') {
-        updateData.whatsappNumber = updatedDriver.whatsappNumber.trim();
+      
+      if (updatedDriver.whatsappNumber !== undefined) {
+        if (updatedDriver.whatsappNumber.trim() !== '') {
+          const sanitizedWhatsApp = sanitizeString(updatedDriver.whatsappNumber);
+          if (!validatePhoneNumber(sanitizedWhatsApp)) {
+            throw new Error('Invalid WhatsApp number format');
+          }
+          updateData.whatsappNumber = sanitizedWhatsApp;
+        }
       }
       
       await updateDoc(driverRef, updateData);
@@ -227,23 +307,44 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     try {
       console.log('DataContext: Adding stage to Firestore:', newStage);
       
-      // Validate required fields
-      if (!newStage.name || !newStage.nameKn) {
-        throw new Error('Name and Kannada name are required');
+      // Validate and sanitize required fields
+      if (!newStage.name?.trim()) {
+        throw new Error('Stage name (English) is required');
+      }
+      if (!newStage.nameKn?.trim()) {
+        throw new Error('Stage name (Kannada) is required');
+      }
+      
+      // Sanitize inputs
+      const sanitizedName = sanitizeString(newStage.name);
+      const sanitizedNameKn = sanitizeString(newStage.nameKn);
+      
+      // Validate lengths  
+      if (sanitizedName.length < 2 || sanitizedName.length > 100) {
+        throw new Error('Stage name must be between 2 and 100 characters');
+      }
+      if (sanitizedNameKn.length < 1 || sanitizedNameKn.length > 100) {
+        throw new Error('Kannada name must be between 1 and 100 characters');
       }
       
       // Create the document data, excluding undefined fields
       const stageData: any = {
-        name: newStage.name,
-        nameKn: newStage.nameKn,
+        name: sanitizedName,
+        nameKn: sanitizedNameKn,
         createdAt: new Date(),
       };
       
-      // Only include latitude/longitude if they have valid values
-      if (newStage.latitude !== undefined && !isNaN(newStage.latitude)) {
+      // Validate and include coordinates if provided
+      if (newStage.latitude !== undefined) {
+        if (!validateLatLng(newStage.latitude)) {
+          throw new Error('Invalid latitude value (-90 to 90)');
+        }
         stageData.latitude = newStage.latitude;
       }
-      if (newStage.longitude !== undefined && !isNaN(newStage.longitude)) {
+      if (newStage.longitude !== undefined) {
+        if (!validateLatLng(newStage.longitude)) {
+          throw new Error('Invalid longitude value (-180 to 180)');
+        }
         stageData.longitude = newStage.longitude;
       }
       
