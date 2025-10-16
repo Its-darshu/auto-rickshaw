@@ -141,22 +141,54 @@ const AdminPage: React.FC = () => {
 
   const handleAddStage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (stageForm.name && stageForm.nameKn) {
-      setIsSubmitting(true);
-      try {
-        await addStage({
-          ...stageForm,
-          latitude: stageForm.latitude ? parseFloat(stageForm.latitude) : undefined,
-          longitude: stageForm.longitude ? parseFloat(stageForm.longitude) : undefined
-        });
-        resetStageForm();
-        setShowAddForm(false);
-      } catch (error) {
-        console.error('Error adding stage:', error);
-        alert('Failed to add stage. Please try again.');
-      } finally {
-        setIsSubmitting(false);
+    
+    // Validation
+    if (!stageForm.name.trim()) {
+      alert('Stage name (English) is required');
+      return;
+    }
+    if (!stageForm.nameKn.trim()) {
+      alert('Stage name (Kannada) is required');
+      return;
+    }
+    
+    console.log('Adding stage:', stageForm);
+    console.log('Current user:', currentUser?.email);
+    console.log('Is admin:', isAdmin);
+    
+    setIsSubmitting(true);
+    try {
+      const stageData = {
+        name: stageForm.name.trim(),
+        nameKn: stageForm.nameKn.trim(),
+        latitude: stageForm.latitude ? parseFloat(stageForm.latitude) : undefined,
+        longitude: stageForm.longitude ? parseFloat(stageForm.longitude) : undefined
+      };
+      
+      console.log('Stage data to add:', stageData);
+      await addStage(stageData);
+      
+      console.log('Stage added successfully');
+      resetStageForm();
+      setShowAddForm(false);
+      alert('Stage added successfully!');
+    } catch (error: any) {
+      console.error('Error adding stage:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      
+      let errorMessage = 'Failed to add stage. ';
+      if (error.code === 'permission-denied') {
+        errorMessage += 'Permission denied. Make sure you are logged in as an admin.';
+      } else if (error.code === 'network-request-failed') {
+        errorMessage += 'Network error. Check your internet connection.';
+      } else {
+        errorMessage += `Error: ${error.message}`;
       }
+      
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

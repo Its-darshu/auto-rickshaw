@@ -137,12 +137,23 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const addStage = async (newStage: Omit<Stage, 'id'>) => {
     try {
-      await addDoc(collection(db, STAGES_COLLECTION), {
+      console.log('DataContext: Adding stage to Firestore:', newStage);
+      
+      // Validate required fields
+      if (!newStage.name || !newStage.nameKn) {
+        throw new Error('Name and Kannada name are required');
+      }
+      
+      const docRef = await addDoc(collection(db, STAGES_COLLECTION), {
         ...newStage,
         createdAt: new Date(),
       });
-    } catch (error) {
-      console.error('Error adding stage:', error);
+      
+      console.log('DataContext: Stage added successfully with ID:', docRef.id);
+    } catch (error: any) {
+      console.error('DataContext: Error adding stage:', error);
+      console.error('DataContext: Error code:', error.code);
+      console.error('DataContext: Error message:', error.message);
       throw error;
     }
   };
