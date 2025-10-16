@@ -158,12 +158,25 @@ const AdminPage: React.FC = () => {
     
     setIsSubmitting(true);
     try {
-      const stageData = {
+      const stageData: any = {
         name: stageForm.name.trim(),
-        nameKn: stageForm.nameKn.trim(),
-        latitude: stageForm.latitude ? parseFloat(stageForm.latitude) : undefined,
-        longitude: stageForm.longitude ? parseFloat(stageForm.longitude) : undefined
+        nameKn: stageForm.nameKn.trim()
       };
+      
+      // Only include coordinates if they are valid numbers
+      if (stageForm.latitude && stageForm.latitude.trim() !== '') {
+        const lat = parseFloat(stageForm.latitude);
+        if (!isNaN(lat)) {
+          stageData.latitude = lat;
+        }
+      }
+      
+      if (stageForm.longitude && stageForm.longitude.trim() !== '') {
+        const lng = parseFloat(stageForm.longitude);
+        if (!isNaN(lng)) {
+          stageData.longitude = lng;
+        }
+      }
       
       console.log('Stage data to add:', stageData);
       await addStage(stageData);
@@ -208,14 +221,31 @@ const AdminPage: React.FC = () => {
     if (editingItem && 'nameKn' in editingItem) {
       setIsSubmitting(true);
       try {
-        await updateStage(editingItem.id, {
-          ...stageForm,
-          latitude: stageForm.latitude ? parseFloat(stageForm.latitude) : undefined,
-          longitude: stageForm.longitude ? parseFloat(stageForm.longitude) : undefined
-        });
+        const updateData: any = {
+          name: stageForm.name.trim(),
+          nameKn: stageForm.nameKn.trim()
+        };
+        
+        // Only include coordinates if they are valid numbers
+        if (stageForm.latitude && stageForm.latitude.trim() !== '') {
+          const lat = parseFloat(stageForm.latitude);
+          if (!isNaN(lat)) {
+            updateData.latitude = lat;
+          }
+        }
+        
+        if (stageForm.longitude && stageForm.longitude.trim() !== '') {
+          const lng = parseFloat(stageForm.longitude);
+          if (!isNaN(lng)) {
+            updateData.longitude = lng;
+          }
+        }
+        
+        await updateStage(editingItem.id, updateData);
         resetStageForm();
         setShowAddForm(false);
         setEditingItem(null);
+        alert('Stage updated successfully!');
       } catch (error) {
         console.error('Error updating stage:', error);
         alert('Failed to update stage. Please try again.');

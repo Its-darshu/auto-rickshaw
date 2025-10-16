@@ -144,10 +144,22 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         throw new Error('Name and Kannada name are required');
       }
       
-      const docRef = await addDoc(collection(db, STAGES_COLLECTION), {
-        ...newStage,
+      // Create the document data, excluding undefined fields
+      const stageData: any = {
+        name: newStage.name,
+        nameKn: newStage.nameKn,
         createdAt: new Date(),
-      });
+      };
+      
+      // Only include latitude/longitude if they have valid values
+      if (newStage.latitude !== undefined && !isNaN(newStage.latitude)) {
+        stageData.latitude = newStage.latitude;
+      }
+      if (newStage.longitude !== undefined && !isNaN(newStage.longitude)) {
+        stageData.longitude = newStage.longitude;
+      }
+      
+      const docRef = await addDoc(collection(db, STAGES_COLLECTION), stageData);
       
       console.log('DataContext: Stage added successfully with ID:', docRef.id);
     } catch (error: any) {
@@ -161,10 +173,27 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const updateStage = async (id: string, updatedStage: Partial<Stage>) => {
     try {
       const stageRef = doc(db, STAGES_COLLECTION, id);
-      await updateDoc(stageRef, {
-        ...updatedStage,
+      
+      // Create update data, excluding undefined fields
+      const updateData: any = {
         updatedAt: new Date(),
-      });
+      };
+      
+      // Only include fields that are not undefined
+      if (updatedStage.name !== undefined) {
+        updateData.name = updatedStage.name;
+      }
+      if (updatedStage.nameKn !== undefined) {
+        updateData.nameKn = updatedStage.nameKn;
+      }
+      if (updatedStage.latitude !== undefined && !isNaN(updatedStage.latitude)) {
+        updateData.latitude = updatedStage.latitude;
+      }
+      if (updatedStage.longitude !== undefined && !isNaN(updatedStage.longitude)) {
+        updateData.longitude = updatedStage.longitude;
+      }
+      
+      await updateDoc(stageRef, updateData);
     } catch (error) {
       console.error('Error updating stage:', error);
       throw error;
