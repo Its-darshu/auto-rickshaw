@@ -35,6 +35,7 @@ interface DataContextType {
   drivers: Driver[];
   stages: Stage[];
   loading: boolean;
+  connectionError: boolean;
   addDriver: (driver: Omit<Driver, 'id'>) => Promise<void>;
   updateDriver: (id: string, driver: Partial<Driver>) => Promise<void>;
   deleteDriver: (id: string) => Promise<void>;
@@ -45,6 +46,7 @@ interface DataContextType {
   getEmergencyDrivers: () => Driver[];
   searchDrivers: (query: string) => Driver[];
   initializeSampleData: () => Promise<void>;
+  refreshData: () => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -69,29 +71,69 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [stages, setStages] = useState<Stage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [connectionError, setConnectionError] = useState(false);
 
   // Real-time listeners for Firestore data
   useEffect(() => {
+    console.log('DataContext: Setting up Firestore listeners...');
+    
     // Listen to stages changes
     const stagesQuery = query(collection(db, STAGES_COLLECTION), orderBy('name'));
-    const unsubscribeStages = onSnapshot(stagesQuery, (snapshot) => {
-      const stagesData: Stage[] = [];
-      snapshot.forEach((doc) => {
-        stagesData.push({ id: doc.id, ...doc.data() } as Stage);
-      });
-      setStages(stagesData);
-      setLoading(false);
-    });
+    const unsubscribeStages = onSnapshot(
+      stagesQuery, 
+      (snapshot) => {
+        console.log('DataContext: Stages snapshot received, docs:', snapshot.size);
+        const stagesData: Stage[] = [];
+        snapshot.forEach((doc) => {
+          stagesData.push({ id: doc.id, ...doc.data() } as Stage);
+        });
+        console.log('DataContext: Stages loaded:', stagesData.length);
+        setStages(stagesData);
+        setLoading(false);
+        setConnectionError(false);
+      },
+      (error) => {
+        console.error('DataContext: Stages listener error:', error);
+        console.error('DataContext: Error code:', error.code);
+        console.error('DataContext: Error message:', error.message);
+        setLoading(false);
+        setConnectionError(true);
+        
+        // If permission denied, still try to continue
+        if (error.code === 'permission-denied') {
+          console.warn('DataContext: Permission denied for stages, using empty array');
+          setStages([]);
+        }
+      }
+    );
 
     // Listen to drivers changes
     const driversQuery = query(collection(db, DRIVERS_COLLECTION), orderBy('name'));
-    const unsubscribeDrivers = onSnapshot(driversQuery, (snapshot) => {
-      const driversData: Driver[] = [];
-      snapshot.forEach((doc) => {
-        driversData.push({ id: doc.id, ...doc.data() } as Driver);
-      });
-      setDrivers(driversData);
-    });
+    const unsubscribeDrivers = onSnapshot(
+      driversQuery, 
+      (snapshot) => {
+        console.log('DataContext: Drivers snapshot received, docs:', snapshot.size);
+        const driversData: Driver[] = [];
+        snapshot.forEach((doc) => {
+          driversData.push({ id: doc.id, ...doc.data() } as Driver);
+        });
+        console.log('DataContext: Drivers loaded:', driversData.length);
+        setDrivers(driversData);
+        setConnectionError(false);
+      },
+      (error) => {
+        console.error('DataContext: Drivers listener error:', error);
+        console.error('DataContext: Error code:', error.code);
+        console.error('DataContext: Error message:', error.message);
+        setConnectionError(true);
+        
+        // If permission denied, still try to continue
+        if (error.code === 'permission-denied') {
+          console.warn('DataContext: Permission denied for drivers, using empty array');
+          setDrivers([]);
+        }
+      }
+    );
 
     // Cleanup listeners
     return () => {
@@ -287,6 +329,13 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     );
   };
 
+  const refreshData = () => {
+    console.log('DataContext: Manual data refresh requested');
+    setLoading(true);
+    setConnectionError(false);
+    // The useEffect will automatically re-setup listeners
+  };
+
   const initializeSampleData = async () => {
     try {
       // Check if data already exists
@@ -368,6 +417,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         drivers,
         stages,
         loading,
+        connectionError,
         addDriver,
         updateDriver,
         deleteDriver,
@@ -378,6 +428,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         getEmergencyDrivers,
         searchDrivers,
         initializeSampleData,
+        refreshData,
       }}
     >
       {children}
