@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import SearchBar from '../components/SearchBar';
 import DriverCard from '../components/DriverCard';
-import LanguageToggle from '../components/LanguageToggle';
+import SidebarMenu from '../components/SidebarMenu';
 
 const HomePage: React.FC = () => {
   const { t } = useLanguage();
@@ -12,6 +12,7 @@ const HomePage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const emergencyDrivers = getEmergencyDrivers();
   
@@ -36,18 +37,44 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="homepage">
-      <header className="App-header">
-        <LanguageToggle />
-        <h1 className="App-title">{t('villageAutoConnect')}</h1>
-        <p className="App-subtitle">{t('findAutoInstantly')}</p>
+      {/* Enhanced Header matching Figma design */}
+      <header className="mobile-header">
+        <div className="header-content">
+          <div className="brand-section">
+            <h1 className="brand-title">Sullia Auto</h1>
+          </div>
+          <button 
+            className="menu-button" 
+            aria-label="Menu"
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            <div className="menu-icon">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </button>
+        </div>
       </header>
 
-      <main className="main-content">
-        <div className="container">
-          {/* Search Section */}
-          <section className="search-section">
-            <SearchBar onSearch={handleSearch} />
+      {/* Sidebar Menu */}
+      <SidebarMenu 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)} 
+      />
+
+      <main className="mobile-main-content">
+        <div className="mobile-container">
+          {/* Enhanced Search Section matching Figma */}
+          <section className="mobile-search-section">
+            <div className="search-container">
+              <SearchBar onSearch={handleSearch} />
+            </div>
           </section>
+
+          {/* Places Section with enhanced cards */}
+          <section className="places-section">
+            <h2 className="section-title">Places</h2>
 
           {/* Search Results */}
           {isSearching && (
@@ -101,43 +128,48 @@ const HomePage: React.FC = () => {
             </section>
           )}
 
-          {/* Stage Selection */}
-          {!isSearching && !selectedStage && (
-            <>
-              {/* Stages Section */}
-              <section className="stages-section">
-                <h2>
-                  <MapPin size={20} />
-                  {t('selectStage')}
-                </h2>
-                <div className="stages-grid">
-                  {stages.map((stage) => {
-                    const stageDrivers = drivers.filter(d => d.stageId === stage.id);
-                    return (
-                      <div 
-                        key={stage.id} 
-                        className="stage-card"
-                        onClick={() => handleStageSelect(stage.id)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <div className="stage-icon">
-                          <MapPin size={24} />
-                        </div>
-                        <div className="stage-info">
-                          <h3 className="stage-name">{stage.name}</h3>
-                          <p className="stage-name-kn">{stage.nameKn}</p>
-                          <div className="stage-stats">
-                            <Users size={16} />
-                            <span>{stageDrivers.length} drivers available</span>
-                          </div>
+            {/* Enhanced Horizontal Cards matching Figma design */}
+            {!isSearching && !selectedStage && (
+              <div className="horizontal-cards-container">
+                {stages.map((stage) => {
+                  const stageDrivers = drivers.filter(d => d.stageId === stage.id);
+                  const emergencyCount = stageDrivers.filter(d => d.isEmergency).length;
+                  
+                  return (
+                    <div 
+                      key={stage.id} 
+                      className="horizontal-card"
+                      onClick={() => handleStageSelect(stage.id)}
+                    >
+                      <div className="card-avatar">
+                        <span className="avatar-initial">{stage.name.charAt(0)}</span>
+                      </div>
+                      
+                      <div className="card-content">
+                        <h3 className="card-header">{stage.name}</h3>
+                        <p className="card-subhead">{stage.nameKn}</p>
+                        <div className="card-stats">
+                          <span className="stat-item">{stageDrivers.length} drivers</span>
+                          {emergencyCount > 0 && (
+                            <span className="emergency-stat">{emergencyCount} 24/7</span>
+                          )}
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </section>
-            </>
-          )}
+                      
+                      <div className="card-actions">
+                        <div className="action-icon">
+                          <Users size={20} />
+                        </div>
+                        <div className="action-icon">
+                          <MapPin size={20} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
 
           {/* Selected Stage Drivers */}
           {selectedStage && (
@@ -226,6 +258,8 @@ const HomePage: React.FC = () => {
           )}
         </div>
       </main>
+
+
     </div>
   );
 };

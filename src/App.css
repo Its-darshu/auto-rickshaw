@@ -5,12 +5,7 @@
 }
 
 .App-header {
-  background: var(--gradient-primary);
-  padding: 24px 0;
-  color: white;
-  box-shadow: var(--shadow);
-  text-align: center;
-  position: relative;
+  display: none;
 }
 
 .App-title {
