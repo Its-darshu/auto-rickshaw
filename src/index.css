@@ -211,69 +211,147 @@ code {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
-  gap: 16px;
-  transition: transform 0.2s ease;
+  padding: 24px;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.driver-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  pointer-events: none;
 }
 
 .driver-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .driver-card.emergency {
   border-left: 4px solid var(--emergency-red);
+  background: rgba(255, 245, 245, 0.85);
+}
+
+.driver-card.emergency:hover {
+  background: rgba(255, 245, 245, 0.95);
 }
 
 .driver-info {
   flex: 1;
+  z-index: 1;
+  position: relative;
 }
 
 .driver-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .driver-name {
   margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: 700;
   color: var(--text-dark);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .emergency-badge {
-  background: var(--emergency-red);
+  background: linear-gradient(135deg, var(--emergency-red), #ff6b6b);
   color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .driver-details {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .detail-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: var(--text-light);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.detail-item svg {
+  color: var(--primary-green);
+}
+
+.stage-info {
+  background: rgba(76, 175, 80, 0.1);
+  color: var(--primary-green);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .driver-actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  z-index: 1;
+  position: relative;
 }
 
 .call-btn, .whatsapp-btn {
-  min-width: 120px;
+  min-width: 130px;
   white-space: nowrap;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.call-btn {
+  background: linear-gradient(135deg, var(--primary-green), #45a049);
+  border: none;
+}
+
+.call-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+.whatsapp-btn {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  border: none;
+}
+
+.whatsapp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
 }
 
 /* Stage List Styles */
@@ -286,28 +364,47 @@ code {
   display: flex;
   align-items: center;
   padding: 20px;
-  background: var(--background-white);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   text-decoration: none;
   color: inherit;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stage-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  pointer-events: none;
 }
 
 .stage-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .stage-icon {
-  background: var(--primary-green);
+  background: linear-gradient(135deg, var(--primary-green), #45a049);
   color: white;
-  padding: 12px;
+  padding: 16px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+  z-index: 1;
+  position: relative;
 }
 
 .stage-info {
@@ -440,7 +537,8 @@ code {
 
 .drivers-grid {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
 }
 
 .map-section, .stages-section {
@@ -946,11 +1044,29 @@ code {
   .driver-card {
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .driver-header {
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .driver-name {
+    font-size: 1.2rem;
   }
   
   .driver-actions {
     flex-direction: row;
+    gap: 12px;
+  }
+  
+  .call-btn, .whatsapp-btn {
+    flex: 1;
+    min-width: auto;
+    padding: 10px 12px;
+    font-size: 0.9rem;
   }
   
   .stage-title h1 {
@@ -970,7 +1086,8 @@ code {
   }
   
   .drivers-grid {
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 
@@ -1005,6 +1122,28 @@ code {
   
   .map-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .driver-card {
+    padding: 16px;
+  }
+  
+  .driver-name {
+    font-size: 1.1rem;
+  }
+  
+  .driver-actions {
+    gap: 8px;
+  }
+  
+  .call-btn, .whatsapp-btn {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+  
+  .emergency-badge {
+    padding: 4px 8px;
+    font-size: 0.7rem;
   }
 }
 

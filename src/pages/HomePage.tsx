@@ -4,7 +4,6 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import SearchBar from '../components/SearchBar';
 import DriverCard from '../components/DriverCard';
-import MapView from '../components/MapView';
 
 const HomePage: React.FC = () => {
   const { t } = useLanguage();
@@ -134,15 +133,6 @@ const HomePage: React.FC = () => {
                     );
                   })}
                 </div>
-              </section>
-
-              {/* Map Section */}
-              <section className="map-section">
-                <h2>
-                  <MapPin size={20} />
-                  Village Map
-                </h2>
-                <MapView stages={stages} />
               </section>
             </>
           )}
