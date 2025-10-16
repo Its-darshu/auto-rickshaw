@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import SearchBar from '../components/SearchBar';
 import DriverCard from '../components/DriverCard';
+import LanguageToggle from '../components/LanguageToggle';
 
 const HomePage: React.FC = () => {
   const { t } = useLanguage();
@@ -36,6 +37,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="homepage">
       <header className="App-header">
+        <LanguageToggle />
         <h1 className="App-title">{t('villageAutoConnect')}</h1>
         <p className="App-subtitle">{t('findAutoInstantly')}</p>
       </header>

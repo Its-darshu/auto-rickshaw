@@ -436,24 +436,6 @@ const AdminPage: React.FC = () => {
               <Plus size={18} />
               {activeTab === 'drivers' ? t('addDriver') : t('addStage')}
             </button>
-            
-            {drivers.length === 0 && stages.length === 0 && (
-              <button 
-                className="btn btn-secondary"
-                onClick={async () => {
-                  if (window.confirm('Initialize with sample data? This will add demo drivers and stages.')) {
-                    try {
-                      await initializeSampleData();
-                    } catch (error) {
-                      console.error('Error initializing sample data:', error);
-                      alert('Failed to initialize sample data. Please try again.');
-                    }
-                  }
-                }}
-              >
-                Initialize Sample Data
-              </button>
-            )}
           </div>
 
           {/* Drivers Tab */}

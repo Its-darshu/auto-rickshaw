@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
             <span>for rural communities</span>
           </div>
           <div className="footer-year">
-            © 2024 Village Auto Connect
+            © 2025 Sullia Auto Connect
           </div>
         </div>
       </div>

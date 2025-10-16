@@ -1,4 +1,4 @@
-// Firebase Configuration for Village Auto Connect
+// Firebase Configuration for Sullia Auto Connect
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';

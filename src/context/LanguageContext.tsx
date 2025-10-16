@@ -17,7 +17,7 @@ const translations = {
     admin: 'Admin',
     
     // Homepage
-    villageAutoConnect: 'Village Auto Connect',
+    villageAutoConnect: 'Sullia Auto Connect',
     findAutoInstantly: 'Find Auto Drivers Instantly',
     selectStage: 'Select Your Stage',
     searchDrivers: 'Search Drivers...',

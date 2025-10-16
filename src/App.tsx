@@ -19,7 +19,6 @@ function App() {
         <DataProvider>
           <Router>
             <div className="App">
-              <LanguageToggle />
               <main className="app-main">
                 <Routes>
                   {isAdminBuild ? (
