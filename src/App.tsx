@@ -5,6 +5,7 @@ import { DataProvider } from './context/DataContext';
 import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
+import DriversPage from './pages/DriversPage';
 import LanguageToggle from './components/LanguageToggle';
 import './App.css';
 
@@ -30,6 +31,7 @@ function App() {
                     // Regular user routes
                     <>
                       <Route path="/" element={<HomePage />} />
+                      <Route path="/drivers/:placeName" element={<DriversPage />} />
                       <Route path="/admin66" element={<AdminPage />} />
                     </>
                   )}

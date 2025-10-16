@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, AlertCircle, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import SearchBar from '../components/SearchBar';
@@ -9,6 +10,7 @@ import SidebarMenu from '../components/SidebarMenu';
 const HomePage: React.FC = () => {
   const { t } = useLanguage();
   const { stages, searchDrivers, getEmergencyDrivers, drivers } = useData();
+  const navigate = useNavigate();
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
@@ -29,10 +31,9 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const handleStageSelect = (stageId: string) => {
-    setSelectedStage(stageId);
-    setIsSearching(false);
-    setSearchResults([]);
+  const handleStageSelect = (stageName: string) => {
+    // Navigate to drivers page with the place name
+    navigate(`/drivers/${encodeURIComponent(stageName)}`);
   };
 
   return (
@@ -139,7 +140,7 @@ const HomePage: React.FC = () => {
                     <div 
                       key={stage.id} 
                       className="horizontal-card"
-                      onClick={() => handleStageSelect(stage.id)}
+                      onClick={() => handleStageSelect(stage.name)}
                     >
                       <div className="card-avatar">
                         <span className="avatar-initial">{stage.name.charAt(0)}</span>

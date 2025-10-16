@@ -381,6 +381,340 @@ code {
   color: var(--primary-green);
 }
 
+/* Figma-Accurate Drivers Page Styles */
+.drivers-page-figma {
+  min-height: 100vh;
+  background: #FFFFFF;
+  position: relative;
+}
+
+/* Figma Header Styles */
+.figma-header {
+  position: relative;
+  padding: 35px 4px 20px 4px;
+  background: #FFFFFF;
+}
+
+.figma-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 438px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.figma-title {
+  font-family: 'Product Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: #000000;
+  margin: 0;
+  line-height: normal;
+}
+
+.figma-menu-button {
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.figma-menu-button .menu-icon {
+  width: 24px;
+  height: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.figma-menu-button .menu-icon span {
+  width: 100%;
+  height: 2px;
+  background: #000000;
+  border-radius: 1px;
+}
+
+/* Figma Search Bar Styles */
+.figma-search-container {
+  padding: 0 15px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.figma-search-bar {
+  display: flex;
+  align-items: center;
+  /* subtle cool gradient like the screenshot */
+  background: linear-gradient(180deg, rgba(233, 240, 248, 0.9) 0%, rgba(223, 232, 243, 0.9) 100%);
+  border: 1px solid rgba(120, 144, 168, 0.35);
+  border-radius: 14px;
+  height: 46px;
+  max-width: 408px;
+  margin: 0 auto;
+  padding: 0 16px 0 14px;
+  gap: 10px;
+  /* soft inner/outer shadows */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 16px rgba(62, 91, 120, 0.10),
+    0 1px 2px rgba(62, 91, 120, 0.08);
+}
+
+.figma-search-bar .search-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  color: #8AA0B5; /* controls SVG color via currentColor */
+}
+
+.figma-search-bar .search-icon svg {
+  width: 16px;
+  height: 16px;
+  opacity: 0.9;
+}
+
+.figma-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: #4A5B6D;
+  padding: 12px 0;
+  height: 100%;
+  line-height: 1.2;
+}
+
+.figma-search-input::placeholder {
+  color: #7B8FA6;
+  font-size: 14px;
+}
+
+/* Figma Place Title */
+.figma-place-title {
+  text-align: center;
+  margin: 20px 0 40px 0;
+}
+
+.figma-place-title h2 {
+  font-family: 'Product Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  color: #000000;
+  margin: 0;
+  line-height: normal;
+}
+
+/* Figma Drivers Container */
+.figma-drivers-container {
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Figma Driver Card - Exact Match */
+.figma-driver-card {
+  background: #FEF7FF;
+  border: 1px solid #CAC4D0;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: none;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Figma Card Header */
+.figma-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 16px 0 16px;
+  height: 72px;
+  box-sizing: border-box;
+}
+
+.figma-avatar {
+  width: 40px;
+  height: 40px;
+  background: #EADDFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.figma-avatar .avatar-letter {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #4F378A;
+  line-height: 24px;
+  text-align: center;
+}
+
+.figma-driver-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 236px;
+}
+
+.figma-driver-name {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #1D1B20;
+  margin: 0;
+  letter-spacing: 0.15px;
+}
+
+.figma-place-name {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1D1B20;
+  margin: 0;
+  letter-spacing: 0.25px;
+}
+
+/* Figma Vehicle Section */
+.figma-vehicle-section {
+  padding: 0 16px 16px 16px;
+}
+
+.figma-vehicle-number {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #1D1B20;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Figma Actions - Exact Button Layout */
+.figma-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 16px 16px 16px;
+  height: 40px;
+}
+
+.figma-whatsapp-btn,
+.figma-call-btn {
+  height: 40px;
+  border-radius: 100px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.figma-whatsapp-btn {
+  background: transparent;
+  border: 1px solid #CAC4D0;
+  color: #49454F;
+  padding: 10px 16px;
+}
+
+.figma-whatsapp-btn:hover {
+  background: rgba(73, 69, 79, 0.08);
+}
+
+.figma-call-btn {
+  background: #6750A4;
+  color: #FFFFFF;
+  padding: 10px 16px;
+  border: none;
+}
+
+.figma-call-btn:hover {
+  background: #5A4094;
+  box-shadow: 0 2px 4px rgba(103, 80, 164, 0.3);
+}
+
+/* Loading and Empty States */
+.figma-loading-state,
+.figma-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.figma-loading-state .loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #6750A4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+.figma-empty-state p {
+  font-family: 'Roboto', sans-serif;
+  color: #49454F;
+  margin-bottom: 20px;
+}
+
+.figma-add-driver-btn {
+  background: #6750A4;
+  color: #FFFFFF;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .figma-drivers-container {
+    padding: 0 16px;
+  }
+  
+  .figma-search-container {
+    padding: 0 16px;
+  }
+  
+  .figma-title {
+    font-size: 28px;
+  }
+  
+  .figma-place-title h2 {
+    font-size: 32px;
+  }
+}
+
 /* Sidebar Menu Styles */
 .sidebar-backdrop {
   position: fixed;
