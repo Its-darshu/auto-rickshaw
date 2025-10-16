@@ -87,21 +87,68 @@ const AdminPage: React.FC = () => {
 
   const handleAddDriver = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (driverForm.name && driverForm.phoneNumber && driverForm.vehicleNumber && driverForm.stageId) {
-      setIsSubmitting(true);
-      try {
-        await addDriver({
-          ...driverForm,
-          whatsappNumber: driverForm.whatsappNumber || undefined
-        });
-        resetDriverForm();
-        setShowAddForm(false);
-      } catch (error) {
-        console.error('Error adding driver:', error);
-        alert('Failed to add driver. Please try again.');
-      } finally {
-        setIsSubmitting(false);
+    
+    // Validation
+    if (!driverForm.name.trim()) {
+      alert('Driver name is required');
+      return;
+    }
+    if (!driverForm.phoneNumber.trim()) {
+      alert('Phone number is required');
+      return;
+    }
+    if (!driverForm.vehicleNumber.trim()) {
+      alert('Vehicle number is required');
+      return;
+    }
+    if (!driverForm.stageId) {
+      alert('Please select a stage');
+      return;
+    }
+    
+    console.log('Adding driver:', driverForm);
+    console.log('Current user:', currentUser?.email);
+    console.log('Is admin:', isAdmin);
+    
+    setIsSubmitting(true);
+    try {
+      const driverData: any = {
+        name: driverForm.name.trim(),
+        phoneNumber: driverForm.phoneNumber.trim(),
+        vehicleNumber: driverForm.vehicleNumber.trim(),
+        stageId: driverForm.stageId,
+        isEmergency: driverForm.isEmergency
+      };
+      
+      // Only include WhatsApp number if provided
+      if (driverForm.whatsappNumber && driverForm.whatsappNumber.trim() !== '') {
+        driverData.whatsappNumber = driverForm.whatsappNumber.trim();
       }
+      
+      console.log('Driver data to add:', driverData);
+      await addDriver(driverData);
+      
+      console.log('Driver added successfully');
+      resetDriverForm();
+      setShowAddForm(false);
+      alert('Driver added successfully!');
+    } catch (error: any) {
+      console.error('Error adding driver:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      
+      let errorMessage = 'Failed to add driver. ';
+      if (error.code === 'permission-denied') {
+        errorMessage += 'Permission denied. Make sure you are logged in as an admin.';
+      } else if (error.code === 'network-request-failed') {
+        errorMessage += 'Network error. Check your internet connection.';
+      } else {
+        errorMessage += `Error: ${error.message}`;
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -123,13 +170,24 @@ const AdminPage: React.FC = () => {
     if (editingItem && 'vehicleNumber' in editingItem) {
       setIsSubmitting(true);
       try {
-        await updateDriver(editingItem.id, {
-          ...driverForm,
-          whatsappNumber: driverForm.whatsappNumber || undefined
-        });
+        const updateData: any = {
+          name: driverForm.name.trim(),
+          phoneNumber: driverForm.phoneNumber.trim(),
+          vehicleNumber: driverForm.vehicleNumber.trim(),
+          stageId: driverForm.stageId,
+          isEmergency: driverForm.isEmergency
+        };
+        
+        // Only include WhatsApp number if provided
+        if (driverForm.whatsappNumber && driverForm.whatsappNumber.trim() !== '') {
+          updateData.whatsappNumber = driverForm.whatsappNumber.trim();
+        }
+        
+        await updateDriver(editingItem.id, updateData);
         resetDriverForm();
         setShowAddForm(false);
         setEditingItem(null);
+        alert('Driver updated successfully!');
       } catch (error) {
         console.error('Error updating driver:', error);
         alert('Failed to update driver. Please try again.');

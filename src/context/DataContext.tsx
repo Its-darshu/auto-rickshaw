@@ -102,12 +102,35 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const addDriver = async (newDriver: Omit<Driver, 'id'>) => {
     try {
-      await addDoc(collection(db, DRIVERS_COLLECTION), {
-        ...newDriver,
+      console.log('DataContext: Adding driver to Firestore:', newDriver);
+      
+      // Validate required fields
+      if (!newDriver.name || !newDriver.phoneNumber || !newDriver.vehicleNumber || !newDriver.stageId) {
+        throw new Error('Name, phone number, vehicle number, and stage are required');
+      }
+      
+      // Create the document data, excluding undefined fields
+      const driverData: any = {
+        name: newDriver.name,
+        phoneNumber: newDriver.phoneNumber,
+        vehicleNumber: newDriver.vehicleNumber,
+        stageId: newDriver.stageId,
+        isEmergency: newDriver.isEmergency || false,
         createdAt: new Date(),
-      });
-    } catch (error) {
-      console.error('Error adding driver:', error);
+      };
+      
+      // Only include whatsappNumber if it has a value
+      if (newDriver.whatsappNumber && newDriver.whatsappNumber.trim() !== '') {
+        driverData.whatsappNumber = newDriver.whatsappNumber.trim();
+      }
+      
+      const docRef = await addDoc(collection(db, DRIVERS_COLLECTION), driverData);
+      
+      console.log('DataContext: Driver added successfully with ID:', docRef.id);
+    } catch (error: any) {
+      console.error('DataContext: Error adding driver:', error);
+      console.error('DataContext: Error code:', error.code);
+      console.error('DataContext: Error message:', error.message);
       throw error;
     }
   };
@@ -115,10 +138,33 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const updateDriver = async (id: string, updatedDriver: Partial<Driver>) => {
     try {
       const driverRef = doc(db, DRIVERS_COLLECTION, id);
-      await updateDoc(driverRef, {
-        ...updatedDriver,
+      
+      // Create update data, excluding undefined fields
+      const updateData: any = {
         updatedAt: new Date(),
-      });
+      };
+      
+      // Only include fields that are not undefined
+      if (updatedDriver.name !== undefined) {
+        updateData.name = updatedDriver.name;
+      }
+      if (updatedDriver.phoneNumber !== undefined) {
+        updateData.phoneNumber = updatedDriver.phoneNumber;
+      }
+      if (updatedDriver.vehicleNumber !== undefined) {
+        updateData.vehicleNumber = updatedDriver.vehicleNumber;
+      }
+      if (updatedDriver.stageId !== undefined) {
+        updateData.stageId = updatedDriver.stageId;
+      }
+      if (updatedDriver.isEmergency !== undefined) {
+        updateData.isEmergency = updatedDriver.isEmergency;
+      }
+      if (updatedDriver.whatsappNumber !== undefined && updatedDriver.whatsappNumber.trim() !== '') {
+        updateData.whatsappNumber = updatedDriver.whatsappNumber.trim();
+      }
+      
+      await updateDoc(driverRef, updateData);
     } catch (error) {
       console.error('Error updating driver:', error);
       throw error;
