@@ -6,7 +6,6 @@ import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
 import LanguageToggle from './components/LanguageToggle';
-import Footer from './components/Footer';
 import './App.css';
 
 function App() {
@@ -36,7 +35,6 @@ function App() {
                   )}
                 </Routes>
               </main>
-              <Footer />
             </div>
           </Router>
         </DataProvider>
