@@ -1961,7 +1961,7 @@ code {
 
 /* Figma Search Section */
 .figma-search-section {
-  padding: 20px 0 16px 0;
+  padding: 20px 15px 16px 15px;
 }
 
 .figma-search-wrapper {
