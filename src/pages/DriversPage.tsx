@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import SidebarMenu from '../components/SidebarMenu';
+import SearchBar from '../components/SearchBar';
 
 interface Driver {
   id: string;
@@ -41,6 +42,10 @@ const DriversPage: React.FC = () => {
     driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     driver.vehicleNumber.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleSearch = (query: string) => {
+    setSearchTerm(query);
+  };
 
   const handleWhatsApp = (driver: Driver) => {
     const phone = driver.whatsappNumber || driver.phoneNumber;
@@ -103,36 +108,15 @@ const DriversPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Search Bar - Figma Style matching HomePage */}
-      <div className="figma-search-section">
-        <div className="figma-search-wrapper">
-          <div className="figma-search-box">
-            <div className="figma-search-icon">
-              <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M23.375 23.375L29.5625 29.5625M14.4375 26.125C7.70638 26.125 2.25 20.6686 2.25 13.9375C2.25 7.20638 7.70638 1.75 14.4375 1.75C21.1686 1.75 26.625 7.20638 26.625 13.9375C26.625 20.6686 21.1686 26.125 14.4375 26.125Z" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <input 
-              type="text" 
-              placeholder="Search Drivers..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="figma-search-input"
-            />
-            {searchTerm && (
-              <button 
-                className="figma-clear-btn"
-                onClick={() => setSearchTerm('')}
-                aria-label="Clear search"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15 5L5 15M5 5L15 15" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            )}
-          </div>
+      {/* Main Content Container */}
+      <main className="figma-main-content">
+        <div className="figma-container">
+          {/* Search Bar - Same as HomePage */}
+          <section className="figma-search-section">
+            <SearchBar onSearch={handleSearch} placeholder="Search Drivers..." />
+          </section>
         </div>
-      </div>
+      </main>
 
       {/* Place Title - Figma Style */}
       <div className="figma-drivers-heading">
