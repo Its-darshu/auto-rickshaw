@@ -58,29 +58,24 @@ const DriversPage: React.FC = () => {
 
   if (!currentStage) {
     return (
-      <div className="drivers-page-figma">
+      <div className="figma-drivers-page">
         <header className="figma-header">
-          <button 
-            className="figma-back-button"
-            onClick={() => navigate('/')}
-          >
-            ←
-          </button>
-          <h1 className="figma-title">Sullia Auto</h1>
-          <button 
-            className="figma-menu-button"
-            onClick={() => setIsSidebarOpen(true)}
-          >
-            <div className="menu-icon">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </button>
+          <div className="figma-header-content">
+            <h1 className="figma-brand-title">Sullia Auto</h1>
+            <button 
+              className="figma-menu-btn"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <svg width="50" height="51" viewBox="0 0 50 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="50" height="51" fill="white"/>
+                <path d="M7.8125 12.75H42.1875M7.8125 25.5H42.1875M7.8125 38.25H42.1875" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
         </header>
         <div className="figma-empty-state">
           <p>Place not found: {placeName}</p>
-          <button onClick={() => navigate('/')}>Go Back</button>
+          <button className="figma-add-driver-btn" onClick={() => navigate('/')}>Go Back</button>
         </div>
         <SidebarMenu 
           isOpen={isSidebarOpen} 
@@ -91,49 +86,50 @@ const DriversPage: React.FC = () => {
   }
 
   return (
-    <div className="drivers-page-figma">
+    <div className="figma-drivers-page">
       {/* Header - Exact Figma Match */}
       <header className="figma-header">
         <div className="figma-header-content">
-          <h1 className="figma-title">Sullia Auto</h1>
+          <h1 className="figma-brand-title">Sullia Auto</h1>
           <button 
-            className="figma-menu-button"
+            className="figma-menu-btn"
             onClick={() => setIsSidebarOpen(true)}
           >
-            <div className="menu-icon">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
+            <svg width="50" height="51" viewBox="0 0 50 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="50" height="51" fill="white"/>
+              <path d="M7.8125 12.75H42.1875M7.8125 25.5H42.1875M7.8125 38.25H42.1875" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
         </div>
       </header>
 
       {/* Search Bar - Figma Style */}
-      <div className="figma-search-container">
-        <div className="figma-search-bar">
-          <div className="search-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="currentColor"/>
-            </svg>
+      <div className="figma-search-section">
+        <div className="figma-search-wrapper">
+          <div className="figma-search-box">
+            <div className="figma-search-icon">
+              <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.375 23.375L29.5625 29.5625M14.4375 26.125C7.70638 26.125 2.25 20.6686 2.25 13.9375C2.25 7.20638 7.70638 1.75 14.4375 1.75C21.1686 1.75 26.625 7.20638 26.625 13.9375C26.625 20.6686 21.1686 26.125 14.4375 26.125Z" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              placeholder="Search Drivers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="figma-search-input"
+            />
           </div>
-          <input 
-            type="text" 
-            placeholder="Search Drivers..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="figma-search-input"
-          />
         </div>
       </div>
 
       {/* Place Title - Figma Style */}
-      <div className="figma-place-title">
+      <div className="figma-drivers-heading">
         <h2>{currentStage.name}</h2>
       </div>
 
       {/* Drivers Container - Exact Figma Layout */}
-      <div className="figma-drivers-container">
+      <div className="figma-drivers-list">
         {loading ? (
           <div className="figma-loading-state">
             <div className="loading-spinner"></div>
@@ -151,38 +147,29 @@ const DriversPage: React.FC = () => {
           </div>
         ) : (
           filteredDrivers.map((driver) => (
-            <div key={driver.id} className="figma-driver-card">
-              {/* Card Header with Avatar and Info */}
-              <div className="figma-card-header">
-                <div className="figma-avatar">
-                  <span className="avatar-letter">{getDriverInitial(driver.name)}</span>
-                </div>
-                <div className="figma-driver-info">
-                  <h3 className="figma-driver-name">{driver.name}</h3>
-                  <p className="figma-place-name">{currentStage.name}</p>
-                </div>
+            <div key={driver.id} className="figma-driver-item">
+              {/* Driver Info Box */}
+              <div className="figma-driver-info-box">
+                <div className="figma-driver-name-text">{driver.name}</div>
+                <div className="figma-auto-number-text">{driver.vehicleNumber}</div>
+                <div className="figma-phone-label">Phone no</div>
               </div>
               
-              {/* Vehicle Number */}
-              <div className="figma-vehicle-section">
-                <p className="figma-vehicle-number">{driver.vehicleNumber}</p>
-              </div>
+              {/* WhatsApp Button */}
+              <button 
+                className="figma-whatsapp-button"
+                onClick={() => handleWhatsApp(driver)}
+              >
+                WhatsApp
+              </button>
               
-              {/* Action Buttons - Exact Figma Style */}
-              <div className="figma-actions">
-                <button 
-                  className="figma-whatsapp-btn"
-                  onClick={() => handleWhatsApp(driver)}
-                >
-                  WhatsApp
-                </button>
-                <button 
-                  className="figma-call-btn"
-                  onClick={() => handleCall(driver.phoneNumber)}
-                >
-                  Call
-                </button>
-              </div>
+              {/* Call Button */}
+              <button 
+                className="figma-call-button"
+                onClick={() => handleCall(driver.phoneNumber)}
+              >
+                Call
+              </button>
             </div>
           ))
         )}
