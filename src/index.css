@@ -1,3 +1,6 @@
+/* Import Crimson Pro font from Google Fonts for Figma design */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -1897,6 +1900,371 @@ code {
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); }
+}
+
+/* Figma Design System Styles */
+
+/* Figma Header */
+.figma-header {
+  background: #FFFFFF;
+  padding: 20px 10px;
+  border-bottom: none;
+  position: relative;
+}
+
+.figma-header-content {
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+
+.figma-brand-title {
+  font-family: 'Crimson Pro', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0;
+  line-height: normal;
+}
+
+.figma-menu-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 50px;
+  height: 51px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.figma-menu-btn:hover {
+  opacity: 0.8;
+}
+
+/* Figma Main Content */
+.figma-main-content {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0;
+  background: #FFFFFF;
+}
+
+.figma-container {
+  width: 100%;
+  padding: 0 10px;
+}
+
+/* Figma Search Section */
+.figma-search-section {
+  padding: 20px 0 16px 0;
+}
+
+.figma-search-wrapper {
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto;
+}
+
+.figma-search-box {
+  position: relative;
+  width: 100%;
+  height: 33px;
+  background: #D9D9D9;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.figma-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.figma-search-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: #000000;
+  padding-left: 36px;
+  font-family: 'Inter', sans-serif;
+}
+
+.figma-search-input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.figma-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666666;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.figma-clear-btn:hover {
+  color: #000000;
+}
+
+/* Figma Places Section */
+.figma-places-section {
+  padding: 20px 0 40px 0;
+}
+
+.figma-places-title {
+  font-family: 'Crimson Pro', serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: #000000;
+  margin: 0 0 20px 0;
+  line-height: normal;
+}
+
+.figma-places-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Figma Place Card */
+.figma-place-card {
+  display: flex;
+  align-items: stretch;
+  background: #D9D9D9;
+  border: 1px solid #000000;
+  border-radius: 0;
+  height: 100px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.figma-place-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.figma-place-name {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 9px;
+  font-family: 'Crimson Pro', serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: #000000;
+  line-height: normal;
+  border-right: 1px solid #000000;
+}
+
+.figma-place-image {
+  width: 179px;
+  height: 100%;
+  background: #FFFFFF;
+  border-left: 1px solid #000000;
+  flex-shrink: 0;
+}
+
+/* Figma Sidebar */
+.figma-sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(150, 150, 150, 0.8);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.figma-sidebar {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 269px;
+  height: 100vh;
+  background: #969696;
+  z-index: 1001;
+  transition: right 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.figma-sidebar.figma-sidebar-open {
+  right: 0;
+}
+
+/* Close Button */
+.figma-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.figma-close-btn:hover {
+  opacity: 0.8;
+}
+
+/* Language Toggle */
+.figma-language-btn {
+  position: absolute;
+  top: 124px;
+  left: 51.5px;
+  background: #9BA2FF;
+  border: 1px solid #000000;
+  padding: 5px 10px;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.figma-language-btn:hover {
+  background: #8891EE;
+}
+
+.figma-language-text {
+  font-family: 'Crimson Pro', 'Noto Sans Kannada', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #000000;
+  line-height: normal;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Developer Footer */
+.figma-developer-footer {
+  position: absolute;
+  bottom: 14.3px;
+  left: 14.5px;
+  right: 14.5px;
+}
+
+.figma-developer-card {
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  padding: 10px;
+  text-align: center;
+  min-height: 182px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.figma-developer-title {
+  font-family: 'Crimson Pro', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #000000;
+  margin: 0 0 8px 0;
+  line-height: normal;
+}
+
+.figma-developer-email,
+.figma-developer-phone {
+  font-family: 'Crimson Pro', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #000000;
+  margin: 0 0 4px 0;
+  line-height: normal;
+}
+
+.figma-developer-tagline {
+  font-family: 'Crimson Pro', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000000;
+  margin: 12px 0 8px 0;
+  line-height: normal;
+}
+
+.figma-developer-copyright {
+  font-family: 'Crimson Pro', serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #000000;
+  margin: 0;
+  line-height: normal;
+}
+
+/* Responsive Adjustments for Figma Design */
+@media (max-width: 480px) {
+  .figma-header-content {
+    padding: 0 16px;
+  }
+  
+  .figma-brand-title {
+    font-size: 28px;
+  }
+  
+  .figma-container {
+    padding: 0 16px;
+  }
+  
+  .figma-search-wrapper {
+    max-width: 100%;
+  }
+  
+  .figma-places-title {
+    font-size: 28px;
+  }
+  
+  .figma-place-name {
+    font-size: 28px;
+  }
+  
+  .figma-place-image {
+    width: 140px;
+  }
+  
+  .figma-sidebar {
+    width: 90%;
+    max-width: 320px;
+    right: -100%;
+  }
+}
+
+@media (min-width: 481px) {
+  .figma-main-content {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* Enhanced Mobile Responsiveness */

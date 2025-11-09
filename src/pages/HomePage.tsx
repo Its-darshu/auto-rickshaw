@@ -38,22 +38,19 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="homepage">
-      {/* Enhanced Header matching Figma design */}
-      <header className="mobile-header">
-        <div className="header-content">
-          <div className="brand-section">
-            <h1 className="brand-title">Sullia Auto</h1>
-          </div>
+      {/* Figma Header Design */}
+      <header className="figma-header">
+        <div className="figma-header-content">
+          <h1 className="figma-brand-title">Sullia Auto</h1>
           <button 
-            className="menu-button" 
+            className="figma-menu-btn" 
             aria-label="Menu"
             onClick={() => setIsSidebarOpen(true)}
           >
-            <div className="menu-icon">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
+            <svg width="50" height="51" viewBox="0 0 50 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="50" height="51" fill="white"/>
+              <path d="M7.8125 12.75H42.1875M7.8125 25.5H42.1875M7.8125 38.25H42.1875" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
         </div>
       </header>
@@ -64,18 +61,16 @@ const HomePage: React.FC = () => {
         onClose={() => setIsSidebarOpen(false)} 
       />
 
-      <main className="mobile-main-content">
-        <div className="mobile-container">
-          {/* Enhanced Search Section matching Figma */}
-          <section className="mobile-search-section">
-            <div className="search-container">
-              <SearchBar onSearch={handleSearch} />
-            </div>
+      <main className="figma-main-content">
+        <div className="figma-container">
+          {/* Figma Search Section */}
+          <section className="figma-search-section">
+            <SearchBar onSearch={handleSearch} />
           </section>
 
-          {/* Places Section with enhanced cards */}
-          <section className="places-section">
-            <h2 className="section-title">Places</h2>
+          {/* Figma Places Section */}
+          <section className="figma-places-section">
+            <h2 className="figma-places-title">Places</h2>
 
           {/* Search Results */}
           {isSearching && (
@@ -129,41 +124,23 @@ const HomePage: React.FC = () => {
             </section>
           )}
 
-            {/* Enhanced Horizontal Cards matching Figma design */}
+            {/* Figma Place Cards */}
             {!isSearching && !selectedStage && (
-              <div className="horizontal-cards-container">
+              <div className="figma-places-grid">
                 {stages.map((stage) => {
                   const stageDrivers = drivers.filter(d => d.stageId === stage.id);
-                  const emergencyCount = stageDrivers.filter(d => d.isEmergency).length;
                   
                   return (
                     <div 
                       key={stage.id} 
-                      className="horizontal-card"
+                      className="figma-place-card"
                       onClick={() => handleStageSelect(stage.name)}
                     >
-                      <div className="card-avatar">
-                        <span className="avatar-initial">{stage.name.charAt(0)}</span>
+                      <div className="figma-place-name">
+                        {stage.name}
                       </div>
-                      
-                      <div className="card-content">
-                        <h3 className="card-header">{stage.name}</h3>
-                        <p className="card-subhead">{stage.nameKn}</p>
-                        <div className="card-stats">
-                          <span className="stat-item">{stageDrivers.length} drivers</span>
-                          {emergencyCount > 0 && (
-                            <span className="emergency-stat">{emergencyCount} 24/7</span>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="card-actions">
-                        <div className="action-icon">
-                          <Users size={20} />
-                        </div>
-                        <div className="action-icon">
-                          <MapPin size={20} />
-                        </div>
+                      <div className="figma-place-image">
+                        {/* Image placeholder - matching Figma design */}
                       </div>
                     </div>
                   );

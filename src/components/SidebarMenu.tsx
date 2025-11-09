@@ -1,5 +1,4 @@
 import React from 'react';
-import { X, Phone, Mail, Globe } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface SidebarMenuProps {
@@ -24,68 +23,37 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ isOpen, onClose }) => {
         />
       )}
       
-      {/* Sidebar */}
-      <div className={`sidebar-menu ${isOpen ? 'sidebar-open' : ''}`}>
-        <div className="sidebar-header">
-          <h2 className="sidebar-title">Menu</h2>
-          <button 
-            className="sidebar-close-btn"
-            onClick={onClose}
-            aria-label="Close menu"
-          >
-            <X size={24} />
-          </button>
-        </div>
+      {/* Figma Sidebar */}
+      <div className={`figma-sidebar ${isOpen ? 'figma-sidebar-open' : ''}`}>
+        {/* Close Button */}
+        <button 
+          className="figma-close-btn"
+          onClick={onClose}
+          aria-label="Close menu"
+        >
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25.5 8.5L8.5 25.5M8.5 8.5L25.5 25.5" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
 
-        <div className="sidebar-content">
-          {/* Language Section */}
-          <div className="sidebar-section">
-            <h3 className="sidebar-section-title">
-              <Globe size={18} />
-              Language
-            </h3>
-            <button 
-              className="language-toggle-sidebar"
-              onClick={toggleLanguage}
-            >
-              {language === 'en' ? 'Switch to ಕನ್ನಡ' : 'Switch to English'}
-            </button>
-          </div>
+        {/* Language Toggle Button */}
+        <button 
+          className="figma-language-btn"
+          onClick={toggleLanguage}
+        >
+          <span className="figma-language-text">
+            {language === 'en' ? 'Translate to ಕನ್ನಡ' : 'Switch to English'}
+          </span>
+        </button>
 
-          {/* App Info */}
-          <div className="sidebar-section">
-            <h3 className="sidebar-section-title">About</h3>
-            <p className="app-description">
-              {t('villageAutoConnect')} - Connecting villages with reliable auto transportation
-            </p>
-          </div>
-        </div>
-
-        {/* Developer Details Footer */}
-        <div className="sidebar-footer">
-          <div className="developer-section">
-            <h4 className="developer-title">Developer</h4>
-            <div className="developer-contacts">
-              <a 
-                href="tel:+917795129290" 
-                className="developer-contact"
-                title="Call Developer"
-              >
-                <Phone size={16} />
-                <span>+91 7795129290</span>
-              </a>
-              <a 
-                href="mailto:darshan99806@gmail.com" 
-                className="developer-contact"
-                title="Email Developer"
-              >
-                <Mail size={16} />
-                <span>darshan99806@gmail.com</span>
-              </a>
-            </div>
-            <div className="copyright">
-              © 2025 Sullia Auto Connect
-            </div>
+        {/* Developer Footer */}
+        <div className="figma-developer-footer">
+          <div className="figma-developer-card">
+            <h4 className="figma-developer-title">Developer</h4>
+            <p className="figma-developer-email">darshan99806@gmail.com</p>
+            <p className="figma-developer-phone">+91 7795129290</p>
+            <p className="figma-developer-tagline">Made For Sullia citizens</p>
+            <p className="figma-developer-copyright">© 2025 SulliaAuto. All rights reserved.</p>
           </div>
         </div>
       </div>
