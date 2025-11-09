@@ -1961,12 +1961,12 @@ code {
 
 /* Figma Search Section */
 .figma-search-section {
-  padding: 20px 15px 16px 15px;
+  padding: 20px 10px 16px 10px;
 }
 
 .figma-search-wrapper {
   width: 100%;
-  max-width: 400px;
+  max-width: 410px;
   margin: 0 auto;
 }
 
