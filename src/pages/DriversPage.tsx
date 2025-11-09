@@ -103,7 +103,7 @@ const DriversPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Search Bar - Figma Style */}
+      {/* Search Bar - Figma Style matching HomePage */}
       <div className="figma-search-section">
         <div className="figma-search-wrapper">
           <div className="figma-search-box">
@@ -119,6 +119,17 @@ const DriversPage: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="figma-search-input"
             />
+            {searchTerm && (
+              <button 
+                className="figma-clear-btn"
+                onClick={() => setSearchTerm('')}
+                aria-label="Clear search"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M15 5L5 15M5 5L15 15" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>
