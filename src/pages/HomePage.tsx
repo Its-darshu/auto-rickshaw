@@ -126,20 +126,13 @@ const HomePage: React.FC = () => {
               <h2 className="figma-places-title">Places</h2>
               <div className="figma-places-grid">
                 {stages.map((stage) => {
-                  const stageDrivers = drivers.filter(d => d.stageId === stage.id);
-                  
                   return (
                     <div 
                       key={stage.id} 
                       className="figma-place-card"
                       onClick={() => handleStageSelect(stage.name)}
                     >
-                      <div className="figma-place-name">
-                        {stage.name}
-                      </div>
-                      <div className="figma-place-image">
-                        {/* Image placeholder - matching Figma design */}
-                      </div>
+                      <p>{stage.name}</p>
                     </div>
                   );
                 })}

@@ -2044,22 +2044,25 @@ code {
 }
 
 .figma-places-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, 190px);
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-/* Figma Place Card */
+/* Figma Place Card - Simple Rectangle Design */
 .figma-place-card {
-  display: flex;
-  align-items: stretch;
   background: #9BA2FF;
   border: 1px solid #000000;
-  border-radius: 0;
-  height: 100px;
+  height: 95px;
+  width: 190px;
+  padding: 9px;
   cursor: pointer;
   transition: all 0.2s ease;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .figma-place-card:hover {
@@ -2067,26 +2070,16 @@ code {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.figma-place-name {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 9px;
+.figma-place-card p {
   font-family: 'Crimson Pro', serif;
   font-size: 32px;
   font-weight: 500;
   color: #000000;
+  margin: 0;
   line-height: normal;
-  border-right: 1px solid #000000;
-}
-
-.figma-place-image {
-  width: 179px;
-  height: 100%;
-  background: #FFFFFF;
-  border-left: 1px solid #000000;
-  flex-shrink: 0;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Figma Sidebar */
@@ -2515,7 +2508,17 @@ code {
     padding: 16px 50px;
   }
   
-
+  .figma-places-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .figma-place-card {
+    width: 100%;
+    min-width: 160px;
+  }
   
   .main-content {
     padding: 24px 0;
@@ -2536,6 +2539,22 @@ code {
   
   .search-input {
     padding: 14px 45px;
+  }
+  
+  .figma-places-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .figma-place-card {
+    width: 100%;
+    height: 80px;
+  }
+  
+  .figma-place-card p {
+    font-size: 24px;
   }
 }
 
