@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit3, Trash2, Users, MapPin, LogOut } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
@@ -11,726 +9,358 @@ const AdminPage: React.FC = () => {
   const { 
     drivers, 
     stages, 
-    loading: dataLoading,
     addDriver, 
     updateDriver, 
     deleteDriver, 
-    addStage, 
-    updateStage, 
-    deleteStage,
-    initializeSampleData
+    addStage
   } = useData();
 
-  const { currentUser, isAdmin, signInWithGoogle, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'drivers' | 'stages'>('drivers');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [editingItem, setEditingItem] = useState<Driver | Stage | null>(null);
+  const { currentUser, isAdmin, signInWithEmail } = useAuth();
+  
+  // View states: 'dashboard' | 'drivers'
+  const [currentView, setCurrentView] = useState<'dashboard' | 'drivers'>('dashboard');
+  const [selectedPlace, setSelectedPlace] = useState<Stage | null>(null);
+  
+  // Modal states
+  const [showAddPlaceModal, setShowAddPlaceModal] = useState(false);
+  const [showAddDriverModal, setShowAddDriverModal] = useState(false);
+  const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Login state
   const [loginError, setLoginError] = useState('');
-  
-  // Driver form state
-  const [driverForm, setDriverForm] = useState({
-    name: '',
-    phoneNumber: '',
-    vehicleNumber: '',
-    stageId: '',
-    isEmergency: false,
-    whatsappNumber: ''
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   
   // Stage form state
   const [stageForm, setStageForm] = useState({
     name: '',
-    nameKn: '',
-    latitude: '',
-    longitude: ''
+    nameKn: ''
+  });
+  
+  // Driver form state
+  const [driverForm, setDriverForm] = useState({
+    name: '',
+    vehicleNumber: '',
+    phoneNumber: ''
   });
 
-  const handleGoogleSignIn = async () => {
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       setLoginError('');
-      await signInWithGoogle();
+      await signInWithEmail(email, password);
     } catch (error: any) {
-      setLoginError(error.message || 'Failed to sign in with Google');
+      setLoginError(error.message || 'Failed to sign in');
     }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error: any) {
-      console.error('Logout error:', error);
-    }
-  };
-
-  const resetDriverForm = () => {
-    setDriverForm({
-      name: '',
-      phoneNumber: '',
-      vehicleNumber: '',
-      stageId: '',
-      isEmergency: false,
-      whatsappNumber: ''
-    });
   };
 
   const resetStageForm = () => {
-    setStageForm({
-      name: '',
-      nameKn: '',
-      latitude: '',
-      longitude: ''
-    });
+    setStageForm({ name: '', nameKn: '' });
+  };
+
+  const resetDriverForm = () => {
+    setDriverForm({ name: '', vehicleNumber: '', phoneNumber: '' });
+  };
+
+  const handleAddPlace = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stageForm.name.trim() || !stageForm.nameKn.trim()) {
+      alert('Both place names are required');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    try {
+      await addStage({
+        name: stageForm.name.trim(),
+        nameKn: stageForm.nameKn.trim()
+      });
+      resetStageForm();
+      setShowAddPlaceModal(false);
+    } catch (error: any) {
+      console.error('Error adding place:', error);
+      alert('Failed to add place. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAddDriver = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedPlace) return;
     
-    // Validation
-    if (!driverForm.name.trim()) {
-      alert('Driver name is required');
+    if (!driverForm.name.trim() || !driverForm.vehicleNumber.trim() || !driverForm.phoneNumber.trim()) {
+      alert('All fields are required');
       return;
     }
-    if (!driverForm.phoneNumber.trim()) {
-      alert('Phone number is required');
-      return;
-    }
-    if (!driverForm.vehicleNumber.trim()) {
-      alert('Vehicle number is required');
-      return;
-    }
-    if (!driverForm.stageId) {
-      alert('Please select a stage');
-      return;
-    }
-    
-    console.log('Adding driver:', driverForm);
-    console.log('Current user:', currentUser?.email);
-    console.log('Is admin:', isAdmin);
     
     setIsSubmitting(true);
     try {
-      const driverData: any = {
+      const driverData = {
         name: driverForm.name.trim(),
-        phoneNumber: driverForm.phoneNumber.trim(),
         vehicleNumber: driverForm.vehicleNumber.trim(),
-        stageId: driverForm.stageId,
-        isEmergency: driverForm.isEmergency
+        phoneNumber: driverForm.phoneNumber.trim(),
+        stageId: selectedPlace.id,
+        isEmergency: false
       };
       
-      // Only include WhatsApp number if provided
-      if (driverForm.whatsappNumber && driverForm.whatsappNumber.trim() !== '') {
-        driverData.whatsappNumber = driverForm.whatsappNumber.trim();
-      }
-      
-      console.log('Driver data to add:', driverData);
-      await addDriver(driverData);
-      
-      console.log('Driver added successfully');
-      resetDriverForm();
-      setShowAddForm(false);
-      alert('Driver added successfully!');
-    } catch (error: any) {
-      console.error('Error adding driver:', error);
-      console.error('Error code:', error.code);
-      console.error('Error message:', error.message);
-      
-      let errorMessage = 'Failed to add driver. ';
-      if (error.code === 'permission-denied') {
-        errorMessage += 'Permission denied. Make sure you are logged in as an admin.';
-      } else if (error.code === 'network-request-failed') {
-        errorMessage += 'Network error. Check your internet connection.';
+      if (editingDriver) {
+        await updateDriver(editingDriver.id, driverData);
       } else {
-        errorMessage += `Error: ${error.message}`;
+        await addDriver(driverData);
       }
       
-      alert(errorMessage);
+      resetDriverForm();
+      setShowAddDriverModal(false);
+      setEditingDriver(null);
+    } catch (error: any) {
+      console.error('Error saving driver:', error);
+      alert('Failed to save driver. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleEditDriver = (driver: Driver) => {
-    setEditingItem(driver);
+    setEditingDriver(driver);
     setDriverForm({
       name: driver.name,
-      phoneNumber: driver.phoneNumber,
       vehicleNumber: driver.vehicleNumber,
-      stageId: driver.stageId,
-      isEmergency: driver.isEmergency,
-      whatsappNumber: driver.whatsappNumber || ''
+      phoneNumber: driver.phoneNumber
     });
-    setShowAddForm(true);
+    setShowAddDriverModal(true);
   };
 
-  const handleUpdateDriver = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingItem && 'vehicleNumber' in editingItem) {
-      setIsSubmitting(true);
+  const handleDeleteDriver = async (driverId: string) => {
+    if (window.confirm('Are you sure you want to delete this driver?')) {
       try {
-        const updateData: any = {
-          name: driverForm.name.trim(),
-          phoneNumber: driverForm.phoneNumber.trim(),
-          vehicleNumber: driverForm.vehicleNumber.trim(),
-          stageId: driverForm.stageId,
-          isEmergency: driverForm.isEmergency
-        };
-        
-        // Only include WhatsApp number if provided
-        if (driverForm.whatsappNumber && driverForm.whatsappNumber.trim() !== '') {
-          updateData.whatsappNumber = driverForm.whatsappNumber.trim();
-        }
-        
-        await updateDriver(editingItem.id, updateData);
-        resetDriverForm();
-        setShowAddForm(false);
-        setEditingItem(null);
-        alert('Driver updated successfully!');
+        await deleteDriver(driverId);
       } catch (error) {
-        console.error('Error updating driver:', error);
-        alert('Failed to update driver. Please try again.');
-      } finally {
-        setIsSubmitting(false);
+        console.error('Error deleting driver:', error);
+        alert('Failed to delete driver. Please try again.');
       }
     }
   };
 
-  const handleAddStage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validation
-    if (!stageForm.name.trim()) {
-      alert('Stage name (English) is required');
-      return;
-    }
-    if (!stageForm.nameKn.trim()) {
-      alert('Stage name (Kannada) is required');
-      return;
-    }
-    
-    console.log('Adding stage:', stageForm);
-    console.log('Current user:', currentUser?.email);
-    console.log('Is admin:', isAdmin);
-    
-    setIsSubmitting(true);
-    try {
-      const stageData: any = {
-        name: stageForm.name.trim(),
-        nameKn: stageForm.nameKn.trim()
-      };
-      
-      // Only include coordinates if they are valid numbers
-      if (stageForm.latitude && stageForm.latitude.trim() !== '') {
-        const lat = parseFloat(stageForm.latitude);
-        if (!isNaN(lat)) {
-          stageData.latitude = lat;
-        }
-      }
-      
-      if (stageForm.longitude && stageForm.longitude.trim() !== '') {
-        const lng = parseFloat(stageForm.longitude);
-        if (!isNaN(lng)) {
-          stageData.longitude = lng;
-        }
-      }
-      
-      console.log('Stage data to add:', stageData);
-      await addStage(stageData);
-      
-      console.log('Stage added successfully');
-      resetStageForm();
-      setShowAddForm(false);
-      alert('Stage added successfully!');
-    } catch (error: any) {
-      console.error('Error adding stage:', error);
-      console.error('Error code:', error.code);
-      console.error('Error message:', error.message);
-      
-      let errorMessage = 'Failed to add stage. ';
-      if (error.code === 'permission-denied') {
-        errorMessage += 'Permission denied. Make sure you are logged in as an admin.';
-      } else if (error.code === 'network-request-failed') {
-        errorMessage += 'Network error. Check your internet connection.';
-      } else {
-        errorMessage += `Error: ${error.message}`;
-      }
-      
-      alert(errorMessage);
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handlePlaceClick = (place: Stage) => {
+    setSelectedPlace(place);
+    setCurrentView('drivers');
   };
 
-  const handleEditStage = (stage: Stage) => {
-    setEditingItem(stage);
-    setStageForm({
-      name: stage.name,
-      nameKn: stage.nameKn,
-      latitude: stage.latitude?.toString() || '',
-      longitude: stage.longitude?.toString() || ''
-    });
-    setShowAddForm(true);
+  const handleBackToDashboard = () => {
+    setCurrentView('dashboard');
+    setSelectedPlace(null);
   };
 
-  const handleUpdateStage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingItem && 'nameKn' in editingItem) {
-      setIsSubmitting(true);
-      try {
-        const updateData: any = {
-          name: stageForm.name.trim(),
-          nameKn: stageForm.nameKn.trim()
-        };
-        
-        // Only include coordinates if they are valid numbers
-        if (stageForm.latitude && stageForm.latitude.trim() !== '') {
-          const lat = parseFloat(stageForm.latitude);
-          if (!isNaN(lat)) {
-            updateData.latitude = lat;
-          }
-        }
-        
-        if (stageForm.longitude && stageForm.longitude.trim() !== '') {
-          const lng = parseFloat(stageForm.longitude);
-          if (!isNaN(lng)) {
-            updateData.longitude = lng;
-          }
-        }
-        
-        await updateStage(editingItem.id, updateData);
-        resetStageForm();
-        setShowAddForm(false);
-        setEditingItem(null);
-        alert('Stage updated successfully!');
-      } catch (error) {
-        console.error('Error updating stage:', error);
-        alert('Failed to update stage. Please try again.');
-      } finally {
-        setIsSubmitting(false);
-      }
-    }
-  };
+  // Filter drivers for selected place
+  const placeDrivers = selectedPlace 
+    ? drivers.filter(d => d.stageId === selectedPlace.id)
+    : [];
 
-  // Debug information
-  console.log('AdminPage - currentUser:', currentUser?.email);
-  console.log('AdminPage - isAdmin:', isAdmin);
-  console.log('AdminPage - drivers count:', drivers.length);
-  console.log('AdminPage - stages count:', stages.length);
-
+  // Login screen
   if (!currentUser || !isAdmin) {
     return (
-      <div className="admin-login">
-        <div className="login-container">
-          <div className="login-card">
-            <div className="login-header">
-              <div className="google-icon">
-                <svg width="32" height="32" viewBox="0 0 48 48">
-                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                </svg>
-              </div>
-              <h1>{t('adminLogin')}</h1>
-              <p className="login-subtitle">Authorized administrators only</p>
+      <div className="figma-admin-login">
+        <div className="figma-login-container">
+          <form onSubmit={handleEmailSignIn} className="figma-login-form">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="figma-email-input"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="figma-password-input"
+              required
+            />
+            <button type="submit" className="figma-submit-btn">
+              Submit
+            </button>
+          </form>
+          
+          {loginError && (
+            <div className="figma-error-message">
+              {loginError}
             </div>
-            
-            {loginError && (
-              <div className="error-message">
-                {loginError}
-              </div>
-            )}
-            
-            <div className="login-form">
-              <button 
-                onClick={handleGoogleSignIn} 
-                className="btn btn-google"
-              >
-                <svg width="20" height="20" viewBox="0 0 48 48" style={{marginRight: '12px'}}>
-                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                </svg>
-                Sign in with Google
-              </button>
-              
-              <div className="login-info">
-                <p>Only authorized Google accounts can access the admin panel.</p>
-              </div>
-            </div>
-            
-            <Link to="/" className="back-to-home">
-              <ArrowLeft size={16} />
-              Back to Home
-            </Link>
-          </div>
+          )}
         </div>
       </div>
     );
   }
 
+  // Dashboard view - showing all places
+  if (currentView === 'dashboard') {
+    return (
+      <div className="figma-admin-dashboard">
+        {/* Logo */}
+        <div className="figma-admin-logo">
+          <p>Sullia Auto</p>
+        </div>
+
+        {/* Places Grid */}
+        <div className="figma-places-grid">
+          {stages.map((stage) => (
+            <div 
+              key={stage.id}
+              className="figma-place-card"
+              onClick={() => handlePlaceClick(stage)}
+            >
+              <p>{stage.name}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Add Place Button */}
+        <button 
+          className="figma-add-place-btn"
+          onClick={() => setShowAddPlaceModal(true)}
+        >
+          <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+            <rect width="50" height="50" rx="8" fill="black"/>
+            <path d="M25 15V35M15 25H35" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+          </svg>
+        </button>
+
+        {/* Add Place Modal */}
+        {showAddPlaceModal && (
+          <div className="figma-modal-overlay" onClick={() => setShowAddPlaceModal(false)}>
+            <div className="figma-add-place-modal" onClick={(e) => e.stopPropagation()}>
+              <form onSubmit={handleAddPlace}>
+                <input
+                  type="text"
+                  placeholder="place name"
+                  value={stageForm.name}
+                  onChange={(e) => setStageForm({...stageForm, name: e.target.value})}
+                  className="figma-modal-input"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="place name in kannada"
+                  value={stageForm.nameKn}
+                  onChange={(e) => setStageForm({...stageForm, nameKn: e.target.value})}
+                  className="figma-modal-input"
+                  required
+                />
+                <button type="submit" className="figma-modal-submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Adding...' : 'Submit'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Drivers view - showing drivers for selected place
   return (
-    <div className="admin-page">
-      <header className="admin-header">
-        <div className="container">
-          <Link to="/" className="back-btn">
-            <ArrowLeft size={20} />
-          </Link>
-          
-          <div className="admin-title">
-            <h1>{t('dashboard')}</h1>
-            <div className="admin-user-info">
-              <img 
-                src={currentUser?.photoURL || ''} 
-                alt="Admin" 
-                className="admin-avatar"
-              />
-              <span className="admin-email">{currentUser?.email}</span>
+    <div className="figma-drivers-page">
+      {/* Logo */}
+      <div className="figma-admin-logo">
+        <p>Sullia Auto</p>
+      </div>
+
+      {/* Place Name */}
+      <div className="figma-place-name">
+        <button onClick={handleBackToDashboard} className="figma-back-btn">←</button>
+        <p>{selectedPlace?.name}</p>
+      </div>
+
+      {/* Drivers List */}
+      <div className="figma-drivers-list">
+        {placeDrivers.map((driver) => (
+          <div key={driver.id} className="figma-driver-card">
+            <div className="figma-driver-name">
+              <p>{driver.name}</p>
+            </div>
+            <div className="figma-driver-actions">
               <button 
-                className="admin-logout-button"
-                onClick={handleLogout}
-                title="Logout"
+                className="figma-edit-btn"
+                onClick={() => handleEditDriver(driver)}
               >
-                <LogOut size={16} />
-                Logout
+                <svg width="29" height="29" viewBox="0 0 29 29" fill="none">
+                  <path d="M3 21.5V26H7.5L21.31 12.19L16.81 7.69L3 21.5ZM24.71 9.79C25.1 9.4 25.1 8.77 24.71 8.38L21.62 5.29C21.23 4.9 20.6 4.9 20.21 5.29L17.79 7.71L22.29 12.21L24.71 9.79Z" fill="black"/>
+                </svg>
+              </button>
+              <button 
+                className="figma-delete-btn"
+                onClick={() => handleDeleteDriver(driver.id)}
+              >
+                <svg width="26" height="27" viewBox="0 0 26 27" fill="none">
+                  <path d="M6.5 21.5C6.5 22.6 7.4 23.5 8.5 23.5H17.5C18.6 23.5 19.5 22.6 19.5 21.5V7.5H6.5V21.5ZM20.5 4.5H16.5L15.5 3.5H10.5L9.5 4.5H5.5V6.5H20.5V4.5Z" fill="black"/>
+                </svg>
               </button>
             </div>
           </div>
-        </div>
-      </header>
+        ))}
+      </div>
 
-      <main className="admin-content">
-        <div className="container">
-          {/* Admin Tabs */}
-          <div className="admin-tabs">
-            <button 
-              className={`tab-btn ${activeTab === 'drivers' ? 'active' : ''}`}
-              onClick={() => setActiveTab('drivers')}
-            >
-              <Users size={20} />
-              {t('manageDrivers')} ({drivers.length})
-            </button>
-            <button 
-              className={`tab-btn ${activeTab === 'stages' ? 'active' : ''}`}
-              onClick={() => setActiveTab('stages')}
-            >
-              <MapPin size={20} />
-              {t('manageStages')} ({stages.length})
-            </button>
-          </div>
+      {/* Add Driver Button */}
+      <button 
+        className="figma-add-driver-btn"
+        onClick={() => {
+          setEditingDriver(null);
+          resetDriverForm();
+          setShowAddDriverModal(true);
+        }}
+      >
+        <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+          <rect width="50" height="50" rx="8" fill="black"/>
+          <path d="M25 15V35M15 25H35" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+        </svg>
+      </button>
 
-          {/* Add Button */}
-          <div className="admin-actions">
-            <button 
-              className="btn btn-primary add-btn"
-              onClick={() => {
-                setShowAddForm(true);
-                setEditingItem(null);
-                if (activeTab === 'drivers') resetDriverForm();
-                else resetStageForm();
-              }}
-            >
-              <Plus size={18} />
-              {activeTab === 'drivers' ? t('addDriver') : t('addStage')}
-            </button>
-          </div>
-
-          {/* Drivers Tab */}
-          {activeTab === 'drivers' && (
-            <div className="drivers-admin">
-              {drivers.length === 0 ? (
-                <div className="empty-state">
-                  <Users size={48} />
-                  <h3>No Drivers Yet</h3>
-                  <p>Click "Add Driver" to start adding auto-rickshaw drivers to your system.</p>
-                </div>
-              ) : (
-                <div className="admin-grid">
-                  {drivers.map((driver) => {
-                  const stage = stages.find(s => s.id === driver.stageId);
-                  return (
-                    <div key={driver.id} className="admin-card">
-                      <div className="card-header">
-                        <h3>{driver.name}</h3>
-                        {driver.isEmergency && (
-                          <span className="emergency-badge">Emergency</span>
-                        )}
-                      </div>
-                      
-                      <div className="card-details">
-                        <p><strong>Phone:</strong> {driver.phoneNumber}</p>
-                        <p><strong>Vehicle:</strong> {driver.vehicleNumber}</p>
-                        <p><strong>Stage:</strong> {stage?.name || 'Unknown'}</p>
-                        {driver.whatsappNumber && (
-                          <p><strong>WhatsApp:</strong> {driver.whatsappNumber}</p>
-                        )}
-                      </div>
-                      
-                      <div className="card-actions">
-                        <button 
-                          className="btn-icon edit"
-                          onClick={() => handleEditDriver(driver)}
-                          title="Edit Driver"
-                        >
-                          <Edit3 size={16} />
-                        </button>
-                        <button 
-                          className="btn-icon delete"
-                          onClick={async () => {
-                            if (window.confirm('Delete this driver?')) {
-                              try {
-                                await deleteDriver(driver.id);
-                              } catch (error) {
-                                console.error('Error deleting driver:', error);
-                                alert('Failed to delete driver. Please try again.');
-                              }
-                            }
-                          }}
-                          title="Delete Driver"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Stages Tab */}
-          {activeTab === 'stages' && (
-            <div className="stages-admin">
-              {stages.length === 0 ? (
-                <div className="empty-state">
-                  <MapPin size={48} />
-                  <h3>No Stages Yet</h3>
-                  <p>Click "Add Stage" to start adding auto-rickshaw stages to your system.</p>
-                </div>
-              ) : (
-                <div className="admin-grid">
-                  {stages.map((stage) => {
-                  const driverCount = drivers.filter(d => d.stageId === stage.id).length;
-                  return (
-                    <div key={stage.id} className="admin-card">
-                      <div className="card-header">
-                        <h3>{stage.name}</h3>
-                        <span className="driver-count">{driverCount} drivers</span>
-                      </div>
-                      
-                      <div className="card-details">
-                        <p><strong>Kannada:</strong> {stage.nameKn}</p>
-                        {stage.latitude && stage.longitude && (
-                          <p><strong>Coordinates:</strong> {stage.latitude}, {stage.longitude}</p>
-                        )}
-                      </div>
-                      
-                      <div className="card-actions">
-                        <button 
-                          className="btn-icon edit"
-                          onClick={() => handleEditStage(stage)}
-                          title="Edit Stage"
-                        >
-                          <Edit3 size={16} />
-                        </button>
-                        <button 
-                          className="btn-icon delete"
-                          onClick={async () => {
-                            if (window.confirm('Delete this stage and all its drivers?')) {
-                              try {
-                                await deleteStage(stage.id);
-                              } catch (error) {
-                                console.error('Error deleting stage:', error);
-                                alert('Failed to delete stage. Please try again.');
-                              }
-                            }
-                          }}
-                          title="Delete Stage"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Add/Edit Form Modal */}
-          {showAddForm && (
-            <div className="modal-overlay">
-              <div className="modal">
-                <div className="modal-header">
-                  <h3>
-                    {editingItem ? 'Edit' : 'Add'} {activeTab === 'drivers' ? 'Driver' : 'Stage'}
-                  </h3>
-                  <button 
-                    className="close-btn"
-                    onClick={() => {
-                      setShowAddForm(false);
-                      setEditingItem(null);
-                    }}
-                  >
-                    ×
-                  </button>
-                </div>
-                
-                {activeTab === 'drivers' ? (
-                  <form onSubmit={editingItem ? handleUpdateDriver : handleAddDriver}>
-                    <div className="form-group">
-                      <label>Driver Name *</label>
-                      <input
-                        type="text"
-                        value={driverForm.name}
-                        onChange={(e) => setDriverForm({...driverForm, name: e.target.value})}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Phone Number *</label>
-                      <input
-                        type="tel"
-                        value={driverForm.phoneNumber}
-                        onChange={(e) => setDriverForm({...driverForm, phoneNumber: e.target.value})}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>WhatsApp Number</label>
-                      <input
-                        type="tel"
-                        value={driverForm.whatsappNumber}
-                        onChange={(e) => setDriverForm({...driverForm, whatsappNumber: e.target.value})}
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Vehicle Number *</label>
-                      <input
-                        type="text"
-                        value={driverForm.vehicleNumber}
-                        onChange={(e) => setDriverForm({...driverForm, vehicleNumber: e.target.value})}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Stage *</label>
-                      <select
-                        value={driverForm.stageId}
-                        onChange={(e) => setDriverForm({...driverForm, stageId: e.target.value})}
-                        required
-                      >
-                        <option value="">Select Stage</option>
-                        {stages.map((stage) => (
-                          <option key={stage.id} value={stage.id}>
-                            {stage.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <div className="form-group checkbox-group">
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={driverForm.isEmergency}
-                          onChange={(e) => setDriverForm({...driverForm, isEmergency: e.target.checked})}
-                        />
-                        Emergency Driver (Available 24/7)
-                      </label>
-                    </div>
-                    
-                    <div className="form-actions">
-                      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                        {isSubmitting ? 'Saving...' : `${editingItem ? 'Update' : 'Add'} Driver`}
-                      </button>
-                      <button 
-                        type="button" 
-                        className="btn btn-secondary"
-                        onClick={() => {
-                          setShowAddForm(false);
-                          setEditingItem(null);
-                        }}
-                        disabled={isSubmitting}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <form onSubmit={editingItem ? handleUpdateStage : handleAddStage}>
-                    <div className="form-group">
-                      <label>Stage Name (English) *</label>
-                      <input
-                        type="text"
-                        value={stageForm.name}
-                        onChange={(e) => setStageForm({...stageForm, name: e.target.value})}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Stage Name (Kannada) *</label>
-                      <input
-                        type="text"
-                        value={stageForm.nameKn}
-                        onChange={(e) => setStageForm({...stageForm, nameKn: e.target.value})}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Latitude (Optional)</label>
-                      <input
-                        type="number"
-                        step="any"
-                        value={stageForm.latitude}
-                        onChange={(e) => setStageForm({...stageForm, latitude: e.target.value})}
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Longitude (Optional)</label>
-                      <input
-                        type="number"
-                        step="any"
-                        value={stageForm.longitude}
-                        onChange={(e) => setStageForm({...stageForm, longitude: e.target.value})}
-                      />
-                    </div>
-                    
-                    <div className="form-actions">
-                      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                        {isSubmitting ? 'Saving...' : `${editingItem ? 'Update' : 'Add'} Stage`}
-                      </button>
-                      <button 
-                        type="button" 
-                        className="btn btn-secondary"
-                        onClick={() => {
-                          setShowAddForm(false);
-                          setEditingItem(null);
-                        }}
-                        disabled={isSubmitting}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                )}
+      {/* Add/Edit Driver Modal */}
+      {showAddDriverModal && (
+        <div className="figma-modal-overlay" onClick={() => {
+          setShowAddDriverModal(false);
+          setEditingDriver(null);
+        }}>
+          <div className="figma-add-driver-modal" onClick={(e) => e.stopPropagation()}>
+            <form onSubmit={handleAddDriver}>
+              <input
+                type="text"
+                placeholder="Driver name"
+                value={driverForm.name}
+                onChange={(e) => setDriverForm({...driverForm, name: e.target.value})}
+                className="figma-modal-input"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Auto no"
+                value={driverForm.vehicleNumber}
+                onChange={(e) => setDriverForm({...driverForm, vehicleNumber: e.target.value})}
+                className="figma-modal-input"
+                required
+              />
+              <div className="figma-phone-input-container">
+                <label className="figma-phone-label">phone</label>
+                <input
+                  type="tel"
+                  placeholder="Phone number"
+                  value={driverForm.phoneNumber}
+                  onChange={(e) => setDriverForm({...driverForm, phoneNumber: e.target.value})}
+                  className="figma-phone-input"
+                  required
+                  maxLength={10}
+                />
               </div>
-            </div>
-          )}
+              <button type="submit" className="figma-modal-submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Saving...' : 'Submit'}
+              </button>
+            </form>
+          </div>
         </div>
-      </main>
+      )}
     </div>
   );
 };

@@ -1,17 +1,16 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { 
   User, 
-  signInWithPopup, 
+  signInWithEmailAndPassword,
   signOut, 
-  onAuthStateChanged,
-  GoogleAuthProvider
+  onAuthStateChanged
 } from 'firebase/auth';
-import { auth, googleProvider } from '../config/firebase';
+import { auth } from '../config/firebase';
 
 interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   isAdmin: boolean;
 }
@@ -41,9 +40,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const signInWithGoogle = async (): Promise<void> => {
+  const signInWithEmail = async (email: string, password: string): Promise<void> => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      const result = await signInWithEmailAndPassword(auth, email, password);
       const user = result.user;
       
       // Check if user is admin
@@ -54,8 +53,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       console.log('Admin signed in:', user.email);
     } catch (error: any) {
-      console.error('Google sign-in error:', error);
-      throw error;
+      console.error('Email sign-in error:', error);
+      
+      // Provide user-friendly error messages
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        throw new Error('Invalid email or password. Please try again.');
+      } else if (error.code === 'auth/too-many-requests') {
+        throw new Error('Too many failed login attempts. Please try again later.');
+      } else if (error.message.includes('Access denied')) {
+        throw error;
+      } else {
+        throw new Error('Failed to sign in. Please try again.');
+      }
     }
   };
 
@@ -91,7 +100,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     currentUser,
     loading,
-    signInWithGoogle,
+    signInWithEmail,
     logout,
     isAdmin
   };

@@ -2538,3 +2538,508 @@ code {
     padding: 14px 45px;
   }
 }
+
+/* Figma Admin Login Styles */
+.figma-admin-login {
+  background: #FFFFFF;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.figma-login-container {
+  background: #d8d4ff;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  width: 324px;
+  align-items: center;
+  justify-content: center;
+}
+
+.figma-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.figma-email-input,
+.figma-password-input {
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  height: 31px;
+  padding: 10px;
+  width: 100%;
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+  outline: none;
+}
+
+.figma-email-input::placeholder,
+.figma-password-input::placeholder {
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+}
+
+.figma-submit-btn {
+  background: #818aff;
+  box-shadow: 2px 2px 0px 0px #000000;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  height: 31px;
+  width: 147px;
+  align-self: center;
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+  transition: all 0.2s ease;
+}
+
+.figma-submit-btn:hover {
+  background: #6d77e6;
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0px 0px #000000;
+}
+
+.figma-submit-btn:active {
+  transform: translateY(0px);
+  box-shadow: 1px 1px 0px 0px #000000;
+}
+
+.figma-error-message {
+  background: #ffebee;
+  border: 1px solid #c62828;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
+  color: #c62828;
+  font-family: 'Crimson Pro', sans-serif;
+  font-size: 16px;
+  text-align: center;
+  width: 100%;
+}
+
+/* Responsive adjustments for admin login */
+@media (max-width: 480px) {
+  .figma-login-container {
+    width: 90%;
+    max-width: 324px;
+    padding: 20px;
+  }
+}
+
+/* ===== Figma Admin Dashboard Styles ===== */
+
+/* Admin Dashboard - Main Container */
+.figma-admin-dashboard {
+  background: #FFFFFF;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  padding: 20px;
+}
+
+/* Admin Logo */
+.figma-admin-logo {
+  position: absolute;
+  top: 25px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.figma-admin-logo p {
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  color: #000000;
+  margin: 0;
+}
+
+/* Places Grid */
+.figma-places-grid {
+  position: absolute;
+  top: 159px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(2, 190px);
+  gap: 20px;
+  max-width: 1000px;
+}
+
+/* Place Card */
+.figma-place-card {
+  background: #d9d9d9;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  height: 95px;
+  width: 190px;
+  padding: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.figma-place-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.figma-place-card p {
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 32px;
+  color: #000000;
+  text-align: center;
+  margin: 0;
+  line-height: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Add Place Button */
+.figma-add-place-btn {
+  position: fixed;
+  bottom: 100px;
+  right: 61px;
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.figma-add-place-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Modal Overlay */
+.figma-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Add Place Modal */
+.figma-add-place-modal {
+  background: #000000;
+  border-radius: 32px;
+  width: 343px;
+  padding: 25px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  align-items: center;
+}
+
+.figma-add-place-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  align-items: center;
+}
+
+.figma-modal-input {
+  background: #FFFFFF;
+  border-radius: 7px;
+  height: 40px;
+  width: 293px;
+  padding: 10px;
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+  border: none;
+  outline: none;
+}
+
+.figma-modal-input::placeholder {
+  color: #999999;
+}
+
+.figma-modal-submit {
+  background: #FFFFFF;
+  border-radius: 7px;
+  height: 40px;
+  width: 293px;
+  padding: 10px;
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.figma-modal-submit:hover {
+  background: #f0f0f0;
+}
+
+.figma-modal-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== Figma Drivers Page Styles ===== */
+
+.figma-drivers-page {
+  background: #FFFFFF;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  padding: 20px;
+}
+
+/* Place Name with Back Button */
+.figma-place-name {
+  position: absolute;
+  top: 120px;
+  left: 63px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.figma-back-btn {
+  background: transparent;
+  border: none;
+  font-size: 32px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  color: #000000;
+  transition: transform 0.2s ease;
+}
+
+.figma-back-btn:hover {
+  transform: translateX(-3px);
+}
+
+.figma-place-name p {
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 32px;
+  color: #000000;
+  margin: 0;
+  line-height: normal;
+}
+
+/* Drivers List */
+.figma-drivers-list {
+  position: absolute;
+  top: 180px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 390px;
+  padding: 20px 0;
+}
+
+/* Driver Card */
+.figma-driver-card {
+  background: #d9d9d9;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  height: 95px;
+  width: 100%;
+  max-width: 390px;
+  padding: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.figma-driver-name {
+  flex: 1;
+}
+
+.figma-driver-name p {
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 32px;
+  color: #000000;
+  margin: 0;
+  line-height: normal;
+  text-align: center;
+}
+
+.figma-driver-actions {
+  display: flex;
+  gap: 27px;
+  align-items: center;
+}
+
+.figma-edit-btn,
+.figma-delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.figma-edit-btn:hover,
+.figma-delete-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Add Driver Button */
+.figma-add-driver-btn {
+  position: fixed;
+  bottom: 100px;
+  right: calc(20% - 28px);
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.figma-add-driver-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Add Driver Modal */
+.figma-add-driver-modal {
+  background: #000000;
+  border-radius: 32px;
+  width: 343px;
+  padding: 25px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.figma-add-driver-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  align-items: center;
+}
+
+/* Phone Input Container */
+.figma-phone-input-container {
+  width: 293px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.figma-phone-label {
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.figma-phone-input {
+  background: #FFFFFF;
+  border-radius: 7px;
+  height: 30px;
+  width: 100%;
+  padding: 10px;
+  font-family: 'Crimson Pro', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+  border: none;
+  outline: none;
+}
+
+/* Responsive Adjustments for Admin */
+@media (max-width: 768px) {
+  .figma-places-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    width: 90%;
+    max-width: 350px;
+  }
+  
+  .figma-place-card {
+    width: 100%;
+    font-size: 28px;
+  }
+  
+  .figma-add-place-btn,
+  .figma-add-driver-btn {
+    right: 30px;
+    bottom: 80px;
+  }
+  
+  .figma-place-name {
+    left: 20px;
+    transform: none;
+  }
+  
+  .figma-drivers-list {
+    width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .figma-admin-logo p {
+    font-size: 24px;
+  }
+  
+  .figma-place-card p,
+  .figma-driver-name p,
+  .figma-place-name p {
+    font-size: 24px;
+  }
+  
+  .figma-modal-input,
+  .figma-modal-submit,
+  .figma-phone-input,
+  .figma-phone-label {
+    font-size: 18px;
+  }
+  
+  .figma-add-place-modal,
+  .figma-add-driver-modal {
+    width: 90%;
+    max-width: 343px;
+  }
+}
