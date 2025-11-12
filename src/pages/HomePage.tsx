@@ -68,10 +68,6 @@ const HomePage: React.FC = () => {
             <SearchBar onSearch={handleSearch} />
           </section>
 
-          {/* Figma Places Section */}
-          <section className="figma-places-section">
-            <h2 className="figma-places-title">Places</h2>
-
           {/* Search Results */}
           {isSearching && (
             <section className="search-results">
@@ -124,8 +120,10 @@ const HomePage: React.FC = () => {
             </section>
           )}
 
-            {/* Figma Place Cards */}
-            {!isSearching && !selectedStage && (
+          {/* Figma Places Section */}
+          {!isSearching && !selectedStage && (
+            <section className="figma-places-section">
+              <h2 className="figma-places-title">Places</h2>
               <div className="figma-places-grid">
                 {stages.map((stage) => {
                   const stageDrivers = drivers.filter(d => d.stageId === stage.id);
@@ -146,8 +144,8 @@ const HomePage: React.FC = () => {
                   );
                 })}
               </div>
-            )}
-          </section>
+            </section>
+          )}
 
           {/* Selected Stage Drivers */}
           {selectedStage && (
